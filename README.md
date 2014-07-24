@@ -1,4 +1,4 @@
 EV0002
 ======
 
-Channel bot in #easyrpg on freenode to provide logs and pizza
+The channel bot in #easyrpg on freenode, provides logs and pizza (and maybe more).
