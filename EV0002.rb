@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'cinch'
+require 'cinch-seen'
 
 require_relative "plugins/asciifood"
 require_relative "plugins/easyrpg_links"
@@ -19,8 +20,13 @@ bot = Cinch::Bot.new do
     c.realname = "EV0002 bot"
     c.channels = ["#easyrpg"]
     c.plugins.prefix = /^:/
-    c.plugins.plugins = [AsciiFood, EasyRPGLinks, LinkGitHubIssues]
+    c.plugins.plugins = [AsciiFood, EasyRPGLinks, LinkGitHubIssues, Cinch::Plugins::Seen]
   end
+
+  # plugin specific options
+  config.plugins.options[Cinch::Plugins::Seen] = {
+    filename: "#{PWD}/data/seen.yml"
+  }
 
   # log to file
   file = File.open("#{PWD}/data/bot.log", "a")
