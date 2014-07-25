@@ -4,6 +4,7 @@ require 'cinch'
 
 require_relative "plugins/asciifood"
 require_relative "plugins/easyrpg_links"
+require_relative "plugins/link_github_issues"
 
 bot = Cinch::Bot.new do
   configure do |c|
@@ -16,7 +17,7 @@ bot = Cinch::Bot.new do
     c.realname = "EV0002 bot"
     c.channels = ["#easyrpg"]
     c.plugins.prefix = /^:/
-    c.plugins.plugins = [AsciiFood, EasyRPGLinks]
+    c.plugins.plugins = [AsciiFood, EasyRPGLinks, LinkGitHubIssues]
   end
 
 end
