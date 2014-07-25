@@ -6,6 +6,8 @@ require_relative "plugins/asciifood"
 require_relative "plugins/easyrpg_links"
 require_relative "plugins/link_github_issues"
 
+PWD = File.dirname(File.expand_path(__FILE__))
+
 bot = Cinch::Bot.new do
   configure do |c|
     c.server = "chat.freenode.net"
@@ -19,6 +21,11 @@ bot = Cinch::Bot.new do
     c.plugins.prefix = /^:/
     c.plugins.plugins = [AsciiFood, EasyRPGLinks, LinkGitHubIssues]
   end
+
+  # log to file
+  file = File.open("#{PWD}/data/bot.log", "a")
+  file.sync = true
+  loggers.push(Cinch::Logger::FormattedLogger.new(file))
 
 end
 
