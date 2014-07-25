@@ -8,11 +8,32 @@ class AsciiFood
   match "pizza"
 
   def beer(msg)
-    msg.reply "[BEER cU]" # to be replaced by proper beer
+    beer = <<-eob
+         .:.      .:.         .:.
+       _oOoOo   _oOoOo       oOoOo_
+      [_|||||  [_|||||       |||||_]
+        |||||    |||||       |||||
+        ~~~~~    ~~~~~       ~~~~~
+    eob
+    msg.reply "#{beer}"
   end
 
   def execute(msg)
-    msg.reply "[PIZZA O]" # to be replaced by proper pizza
+    pizza = <<-eop
+           _....._
+       _.:`.--|--.`:._
+     .: .'\\o  | o /'. '.
+    // '.  \\ o|  /  o '.\\
+   //'._o'. \\ |o/ o_.-'o\\\\
+   || o '-.'.\\|/.-' o   ||
+   ||--o--o-->|<o-----o-||
+   \\\\  o _.-'/|\\'-._o  o//
+    \\\\.-'  o/ |o\\ o '-.//
+     '.'.o / o|  \\ o.'.'
+       `-:/.__|__o\\:-'
+          `\"--=--\"`
+    eop
+    msg.reply "#{pizza}"
   end
 
 end
