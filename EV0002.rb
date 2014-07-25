@@ -2,6 +2,8 @@
 
 require 'cinch'
 
+require_relative "plugins/asciifood"
+
 bot = Cinch::Bot.new do
   configure do |c|
     c.server = "chat.freenode.net"
@@ -13,6 +15,7 @@ bot = Cinch::Bot.new do
     c.realname = "EV0002"
     c.channels = ["#easyrpg"]
     c.plugins.prefix = /^:/
+    c.plugins.plugins = [AsciiFood]
   end
 
 end
