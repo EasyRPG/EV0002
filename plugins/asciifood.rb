@@ -20,18 +20,11 @@ class AsciiFood
 
   def execute(msg)
     pizza = <<-eop
-           _....._
-       _.:`.--|--.`:._
-     .: .'\\o  | o /'. '.
-    // '.  \\ o|  /  o '.\\
-   //'._o'. \\ |o/ o_.-'o\\\\
-   || o '-.'.\\|/.-' o   ||
-   ||--o--o-->|<o-----o-||
-   \\\\  o _.-'/|\\'-._o  o//
-    \\\\.-'  o/ |o\\ o '-.//
-     '.'.o / o|  \\ o.'.'
-       `-:/.__|__o\\:-'
-          `\"--=--\"`
+    //"""--.._
+   ||  (_)  _ "-._      PPPPP IIII ZZZZZ ZZZZZ    A
+   ||    _ (_)    '-.   PP  PP II    ZZ    ZZ    A A
+   ||   (_)   __..-'    PPPPP  II   ZZ    ZZ    AAAAA
+    \\\\__..--""          PP    IIII ZZZZZ ZZZZZ A     A
     eop
     msg.reply "#{pizza}"
   end
