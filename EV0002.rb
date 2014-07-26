@@ -2,6 +2,8 @@
 
 require 'cinch'
 require 'cinch-seen'
+require 'cinch/plugins/identify'
+require 'yaml'
 
 require_relative "plugins/asciifood"
 require_relative "plugins/easyrpg_links"
@@ -10,6 +12,9 @@ require_relative "plugins/http_server"
 require_relative "plugins/github_hooks"
 
 PWD = File.dirname(File.expand_path(__FILE__))
+
+# load secrets from config file
+$secrets = YAML.load_file("#{PWD}/secrets.yml")
 
 bot = Cinch::Bot.new do
   configure do |c|
@@ -27,6 +32,7 @@ bot = Cinch::Bot.new do
                           EasyRPGLinks,
                           LinkGitHubIssues,
                           Cinch::Plugins::Seen,
+                          Cinch::Plugins::Identify,
                           Cinch::HttpServer,
                           Cinch::GitHubHooks
                         ]
@@ -35,6 +41,12 @@ bot = Cinch::Bot.new do
   # plugin specific options
   config.plugins.options[Cinch::Plugins::Seen] = {
     filename: "#{PWD}/data/seen.yml"
+  }
+
+  config.plugins.options[Cinch::Plugins::Identify] = {
+    :username => $secrets["nickserv"]["username"],
+    :password => $secrets["nickserv"]["password"],
+    :type     => :nickserv,
   }
 
   config.plugins.options[Cinch::HttpServer] = {
