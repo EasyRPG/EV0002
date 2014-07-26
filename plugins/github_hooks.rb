@@ -62,7 +62,7 @@ class Cinch::GitHubHooks
                         data["issue"]["number"],
                         repo,
                         data["issue"]["title"],
-                        data["issue"]["html_url"])
+                        data["comment"]["html_url"])
 
     when "watch"
       # starring a repo means watching it
