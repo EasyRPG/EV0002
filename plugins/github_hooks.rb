@@ -83,6 +83,9 @@ class Cinch::GitHubHooks
       # TODO: figure out, why this is not in the hash, as api only returns 20 commits max.
       count = (data["commits"].count < 20 ? data["commits"].count.to_s : "some")
 
+      # abort when an empty commit is pushed (for example deleting a branch)
+      halt 204 if count == 0
+
       template = "%s pushed %s commit(s) to %s: %s."
       message = sprintf(template,
                         data["pusher"]["name"],
