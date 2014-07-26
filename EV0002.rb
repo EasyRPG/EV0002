@@ -7,6 +7,7 @@ require_relative "plugins/asciifood"
 require_relative "plugins/easyrpg_links"
 require_relative "plugins/link_github_issues"
 require_relative "plugins/http_server"
+require_relative "plugins/github_hooks"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -26,7 +27,8 @@ bot = Cinch::Bot.new do
                           EasyRPGLinks,
                           LinkGitHubIssues,
                           Cinch::Plugins::Seen,
-                          Cinch::HttpServer
+                          Cinch::HttpServer,
+                          Cinch::GitHubHooks
                         ]
   end
 
