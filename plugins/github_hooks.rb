@@ -63,6 +63,10 @@ class Cinch::GitHubHooks
                         repo,
                         data["issue"]["title"],
                         data["comment"]["html_url"])
+      # add up to 80 characters of the comment, sans all whitespace
+      comment = data["comment"]["body"].gsub(/\s+/,' ').strip
+      message << "\n> " + comment[0, 80]
+      message << "…" if comment.length > 80
 
     when "watch"
       # starring a repo means watching it
@@ -75,11 +79,13 @@ class Cinch::GitHubHooks
     when "push"
       # git commits
 
-      template = "%s pushed %i commit(s) to %s: %s."
+      # TODO: figure out, why this is not in the hash, as api only returns 20 commits max.
+      count = (data["commits"].count < 20 ? data["commits"].count.to_s : "some")
+
+      template = "%s pushed %s commit(s) to %s: %s."
       message = sprintf(template,
                         data["pusher"]["name"],
-                        data["commits"].count, # TODO: figure out, why this is not in the
-                                               # hash, as api only returns 20 issues max.
+                        count,
                         repo,
                         data["compare"])
 
@@ -165,12 +171,12 @@ class Cinch::GitHubHooks
     else
       # something we do not know, yet
 
-      message = "Unknown #{event} event for #{repo} repository, dumped JSON: #{data.inspect[1, 300]}..."
+      message = "Unknown #{event} event for #{repo} repository, dumped JSON: #{data.inspect[0, 300]}..."
 
     end
 
     # output
-    bot.channels[0].send("[GitHub spy] #{message}")
+    bot.channels[0].send("[GitHub] #{message}")
 
     204
   end
