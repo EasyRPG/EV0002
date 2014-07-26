@@ -25,4 +25,5 @@ There are a few exceptions to the license, see `Acknowledgements` sections for d
 Acknowledgements
 ----------------
 
-plugins/http_server.rb by @Quintus, under LGPL license
+plugins/http_server.rb by [Quintus](https://github.com/Quintus), under LGPL license -
+from https://github.com/Quintus/cinch-plugins
