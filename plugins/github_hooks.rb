@@ -37,8 +37,6 @@ class Cinch::GitHubHooks
     repo = data["repository"]["name"]
     unless event == "push"
       user = data["sender"]["login"]
-    else
-      user = data["pusher"]["name"]
     end
 
     # handle event
@@ -79,7 +77,7 @@ class Cinch::GitHubHooks
 
       template = "%s pushed %i commit(s) to %s: %s."
       message = sprintf(template,
-                        user,
+                        data["pusher"]["name"],
                         data["commits"].count, # TODO: figure out, why this is not in the
                                                # hash, as api only returns 20 issues max.
                         repo,
@@ -131,22 +129,43 @@ class Cinch::GitHubHooks
     when "create"
       # add branch or tag
 
-      message = "TODO: add branch/tag"
+      template = "%s created %s \"%s\" at %s"
+      message = sprintf(template,
+                        user,
+                        data["ref_type"],
+                        data["ref"],
+                        repo)
 
     when "delete"
       # remove branch or tag
 
-      message = "TODO: remove branch/tag"
+      template = "%s deleted %s \"%s\" at %s"
+      message = sprintf(template,
+                        user,
+                        data["ref_type"],
+                        data["ref"],
+                        repo)
 
     when "release"
-      # release
+      # created release
 
-      message = "TODO: created release"
+      unless data["release"]["name"].nil?
+        release = "release \"#{data["release"]["name"]}\""
+      else
+        release = "a release"
+      end
+
+      template = "%s created %s at %s: %s"
+      message = sprintf(template,
+                        user,
+                        release,
+                        repo,
+                        data["release"]["html_url"])
 
     else
       # something we do not know, yet
 
-      message = "#{event} event for #{repo} repository: #{data.inspect[1, 300]}..."
+      message = "Unknown #{event} event for #{repo} repository, dumped JSON: #{data.inspect[1, 300]}..."
 
     end
 
