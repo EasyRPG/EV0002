@@ -71,10 +71,11 @@ class Cinch::GitHubHooks
     when "watch"
       # starring a repo means watching it
 
-      template = "%s starred %s."
+      template = "%s starred %s: %s"
       message = sprintf(template,
                         user,
-                        repo)
+                        repo,
+                        data["sender"]["html_url"])
 
     when "push"
       # git commits
