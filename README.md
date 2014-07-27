@@ -15,6 +15,9 @@ You can use bundler to install the dependencies.
 
     $ bundle
 
+Secret values (passwords and such) are read from a file `secrets.yml` on startup.
+A template is provided, you need to copy it and fill in the values.
+
 LICENSE
 -------
 
