@@ -74,6 +74,7 @@ class Cinch::GitHubWebhooks
                         repo,
                         data["issue"]["title"],
                         data["comment"]["html_url"])
+
       # add up to 80 characters of the comment, sans all whitespace
       comment = data["comment"]["body"].gsub(/\s+/,' ').strip
       message << "\n> " + comment[0, 80]
@@ -92,15 +93,22 @@ class Cinch::GitHubWebhooks
       # git commits
 
       # TODO: figure out, why this is not in the hash, as api only returns 20 commits max.
-      count = (data["commits"].count < 20 ? data["commits"].count.to_s : "some")
+      if data["commits"].count == 0
+        # abort when an empty commit is pushed (for example deleting a branch)
+        halt 204
+      elsif data["commits"].count == 1
+        counter_s = "1 commit"
+      elsif data["commits"].count < 20
+        counter_s = data["commits"].count.to_s + " commits"
+      else
+        # all above 19
+        counter_s = "some commits"
+      end
 
-      # abort when an empty commit is pushed (for example deleting a branch)
-      halt 204 if count == 0
-
-      template = "%s pushed %s commit(s) to %s: %s."
+      template = "%s pushed %s to %s: %s."
       message = sprintf(template,
                         data["pusher"]["name"],
-                        count,
+                        counter_s,
                         repo,
                         data["compare"])
 
@@ -146,6 +154,11 @@ class Cinch::GitHubWebhooks
                         repo,
                         data["pull_request"]["title"],
                         data["comment"]["html_url"])
+
+      # add up to 80 characters of the comment, sans all whitespace
+      comment = data["comment"]["body"].gsub(/\s+/,' ').strip
+      message << "\n> " + comment[0, 80]
+      message << "…" if comment.length > 80
 
     when "create"
       # add branch or tag
