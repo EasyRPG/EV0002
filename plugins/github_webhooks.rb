@@ -8,7 +8,7 @@
 # needs json gem
 require "json"
 
-class Cinch::GitHubHooks
+class Cinch::GitHubWebhooks
   include Cinch::Plugin
   extend Cinch::HttpServer::Verbs
 
@@ -17,7 +17,7 @@ class Cinch::GitHubHooks
     payload = request.body.read
 
     # check X-Hub-Signature, to ensure authorization
-    secret = bot.config.plugins.options[Cinch::GitHubHooks][:secret]
+    secret = bot.config.plugins.options[Cinch::GitHubWebhooks][:secret]
     signature = 'sha1=' + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), secret, payload)
     halt 403 unless Rack::Utils.secure_compare(signature, request.env['HTTP_X_HUB_SIGNATURE'])
 

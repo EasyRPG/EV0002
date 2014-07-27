@@ -9,7 +9,7 @@ require_relative "plugins/asciifood"
 require_relative "plugins/easyrpg_links"
 require_relative "plugins/link_github_issues"
 require_relative "plugins/http_server"
-require_relative "plugins/github_hooks"
+require_relative "plugins/github_webhooks"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -34,7 +34,7 @@ bot = Cinch::Bot.new do
                           Cinch::Plugins::Seen,
                           Cinch::Plugins::Identify,
                           Cinch::HttpServer,
-                          Cinch::GitHubHooks
+                          Cinch::GitHubWebhooks
                         ]
   end
 
@@ -66,7 +66,7 @@ bot = Cinch::Bot.new do
     :logfile => "#{PWD}/data/webhooks.log"
   }
 
-  config.plugins.options[Cinch::GitHubHooks] = {
+  config.plugins.options[Cinch::GitHubWebhooks] = {
     :secret => $secrets["github_hooks"]["secret"]
   }
 
