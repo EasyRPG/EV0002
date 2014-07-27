@@ -8,13 +8,18 @@ class Cinch::GitHubHooks
 
   post "/github_webhook" do
     request.body.rewind
+    payload = request.body.read
 
-    # TODO: check X-Hub-Signature, to ensure authorization
-    #halt 404 if 
+    # check X-Hub-Signature, to ensure authorization
+    secret = bot.config.plugins.options[Cinch::GitHubHooks][:secret]
+    signature = 'sha1=' + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), secret, payload)
+    halt 403 unless Rack::Utils.secure_compare(signature, request.env['HTTP_X_HUB_SIGNATURE'])
+
     # return if we got an x-www-form-urlencoded request
     halt 400 if params[:payload]
+
     # return if we got no valid json data
-    data = JSON.parse(request.body.read)
+    data = JSON.parse(payload)
     halt 400 if data.empty?
 
     # get event type from http header

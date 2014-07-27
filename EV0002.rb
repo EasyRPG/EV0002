@@ -55,6 +55,10 @@ bot = Cinch::Bot.new do
     :logfile => "#{PWD}/data/webhooks.log"
   }
 
+  config.plugins.options[Cinch::GitHubHooks] = {
+    :secret => $secrets["github_hooks"]["secret"]
+  }
+
   # log to file
   file = File.open("#{PWD}/data/bot.log", "a")
   file.sync = true
