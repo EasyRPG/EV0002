@@ -1,5 +1,11 @@
+#
+# This cinch plugin is part of EV0002
+#
+# written by carstene1ns <dev @ f4ke . de> 2014
+# available under MIT license
+#
 
-#require "date"
+# needs json gem
 require "json"
 
 class Cinch::GitHubHooks
