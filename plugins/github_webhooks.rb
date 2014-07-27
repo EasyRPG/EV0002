@@ -160,6 +160,20 @@ class Cinch::GitHubWebhooks
       message << "\n> " + comment[0, 80]
       message << "…" if comment.length > 80
 
+    when "commit_comment"
+      # comment on commit
+
+      template = "%s commented on a commit of %s: %s"
+      message = sprintf(template,
+                        user,
+                        repo,
+                        data["comment"]["html_url"])
+
+      # add up to 80 characters of the comment, sans all whitespace
+      comment = data["comment"]["body"].gsub(/\s+/,' ').strip
+      message << "\n> " + comment[0, 80]
+      message << "…" if comment.length > 80
+
     when "create"
       # add branch or tag
 
