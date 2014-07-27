@@ -9,8 +9,14 @@ in ruby, like the legacy EV0001.
 Installation
 ------------
 
-Needed gems beside `cinch` are: `json`, `cinch-seen`, `thin` and `sinatra` (see Gemfile
-for details).
+Needed gems beside `cinch` are (see Gemfile for details):
+
+ * cinch-seen
+ * cinch-identify
+ * json
+ * thin
+ * sinatra
+
 You can use bundler to install the dependencies.
 
     $ bundle
