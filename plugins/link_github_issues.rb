@@ -14,7 +14,7 @@ require "json"
 class LinkGitHubIssues
   include Cinch::Plugin
 
-  match %r{([\w-]{3,})#(\d{1,4})}, :use_prefix => false
+  match %r{([\w-]{3,}) ?#(\d{1,4})}, :use_prefix => false
 
   def execute(msg, project, id)
     # do not reply to own messages
@@ -29,10 +29,13 @@ class LinkGitHubIssues
     # contruct url
     url = sprintf("https://api.github.com/repos/EasyRPG/%s/issues/%i", project, id.to_i)
 
-    # get title and url of issue and send to irc
+    # get info and url of issue or pull request and send to irc
     res = JSON.parse(open(url).read)
     if res.has_key? 'number'
-      msg.reply("Issue #{id.to_i}: \"#{res["title"]}\" - #{res["html_url"]}")
+
+      type = (res.has_key?('pull_request') ? "Pull request" : "Issue")
+
+      msg.reply("#{type} #{id.to_i}[#{res["state"]}]: \"#{res["title"]}\" - #{res["html_url"]}")
     end
   end
 
