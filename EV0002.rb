@@ -38,7 +38,18 @@ bot = Cinch::Bot.new do
                         ]
   end
 
+  # all EasyRPG projects
+  projects = ["liblcf", "Player", "Editor-Qt", "Editor-GTK", "LCF2XML", "RTP", "TestGame"]
+
   # plugin specific options
+  config.plugins.options[EasyRPGLinks] = {
+    :projects => projects
+  }
+
+  config.plugins.options[LinkGitHubIssues] = {
+    :projects => projects
+  }
+
   config.plugins.options[Cinch::Plugins::Seen] = {
     filename: "#{PWD}/data/seen.yml"
   }

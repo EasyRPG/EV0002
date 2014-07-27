@@ -21,27 +21,20 @@ class EasyRPGLinks
   match "identica", method: :link_identica
   match "paste", method: :link_paste
 
-  def initialize(*args)
-    super
-
-    # all available EasyRPG projects
-    @projects = ["liblcf", "Player", "Editor-Qt", "Editor-GTK", "LCF2XML", "RTP", "TestGame"]
-  end
-
   def execute(msg, project)
     # iterate over all projects to find the right
-    chosen = @projects.detect { |p| p.downcase == project.downcase }
+    chosen = config[:projects].detect { |p| p.downcase == project.downcase }
 
     # not found, give hint
     if chosen.nil?
-      msg.reply "I do not know this project, available are: " + @projects.join(", ")
+      msg.reply "I do not know this project, available are: " + config[:projects].join(", ")
     else
       msg.reply "https://github.com/EasyRPG/#{chosen}/issues"
     end
   end
 
   def help_bugs(msg)
-    msg.reply "You need to provide a project, available are: " + @projects.join(", ")
+    msg.reply "You need to provide a project, available are: " + config[:projects].join(", ")
   end
 
   def link_web(msg)

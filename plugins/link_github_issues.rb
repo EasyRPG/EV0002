@@ -21,11 +21,8 @@ class LinkGitHubIssues
     return if msg.user == bot
     # TODO: do not reply to easyrpg-spambot messages
 
-    # TODO: move to global config
-    projects = ["liblcf", "Player", "Editor-Qt", "Editor-GTK", "LCF2XML", "RTP", "TestGame"]
-
     # iterate over all projects to find the right
-    chosen = projects.detect { |p| p.downcase == project.downcase }
+    chosen = config[:projects].detect { |p| p.downcase == project.downcase }
     # not found, ignore
     return if chosen.nil?
 
