@@ -5,12 +5,10 @@
 # available under MIT license
 #
 
-require 'cinch'
-
-class EasyRPGLinks
+class Cinch::EasyRPGLinks
   include Cinch::Plugin
 
-  match /bugs (.*)/
+  match /bugs ([^ ]+)$/
   match "bugs", method: :help_bugs
   match "web", method: :link_web
   match "blog", method: :link_blog

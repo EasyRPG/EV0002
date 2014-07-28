@@ -7,11 +7,10 @@
 
 # needs json gem
 
-require 'cinch'
 require "open-uri"
 require "json"
 
-class LinkGitHubIssues
+class Cinch::LinkGitHubIssues
   include Cinch::Plugin
 
   match %r{([\w-]{3,}) ?#(\d{1,4})}, :use_prefix => false

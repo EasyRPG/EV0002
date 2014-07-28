@@ -182,6 +182,9 @@ class Cinch::HttpServer
       self.class.bot
     end
 
+    # Be quiet when something is wrong (#500)
+    set :show_exceptions, false
+
   end
 
   # Extend your plugins with this module to allow them

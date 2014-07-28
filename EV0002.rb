@@ -28,9 +28,9 @@ bot = Cinch::Bot.new do
     c.channels = ["#easyrpg"]
     c.plugins.prefix = /^:/
     c.plugins.plugins = [
-                          AsciiFood,
-                          EasyRPGLinks,
-                          LinkGitHubIssues,
+                          Cinch::AsciiFood,
+                          Cinch::EasyRPGLinks,
+                          Cinch::LinkGitHubIssues,
                           Cinch::Plugins::Seen,
                           Cinch::Plugins::Identify,
                           Cinch::HttpServer,
@@ -42,11 +42,11 @@ bot = Cinch::Bot.new do
   projects = ["liblcf", "Player", "Editor-Qt", "Editor-GTK", "LCF2XML", "RTP", "TestGame"]
 
   # plugin specific options
-  config.plugins.options[EasyRPGLinks] = {
+  config.plugins.options[Cinch::EasyRPGLinks] = {
     :projects => projects
   }
 
-  config.plugins.options[LinkGitHubIssues] = {
+  config.plugins.options[Cinch::LinkGitHubIssues] = {
     :projects => projects
   }
 

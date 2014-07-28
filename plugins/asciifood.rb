@@ -5,9 +5,7 @@
 # available under MIT license
 #
 
-require 'cinch'
-
-class AsciiFood
+class Cinch::AsciiFood
   include Cinch::Plugin
 
   match "drink", method: :beer
