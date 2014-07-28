@@ -1,38 +1,22 @@
 # -*- coding: utf-8 -*-
 #
 # = Cinch advanced message logging plugin
-# Fully-featured logging module for cinch with both
-# plaintext and HTML logs.
+# Fully-featured logging module for cinch with HTML logs.
 #
 # == Configuration
 # Add the following to your bot’s configure.do stanza:
 #
 #   config.plugins.options[Cinch::LogPlus] = {
-#     :plainlogdir => "/tmp/logs/plainlogs", # required
-#     :htmllogdir  => "/tmp/logs/htmllogs", # required
-#     :timelogformat => "%H:%M",
-#     :extrahead => ""
+#     :logdir => "/tmp/logs/htmllogs", # required
 #   }
 #
-# [plainlogdir]
-#   This required option specifies where the plaintext logfiles
-#   are kept.
-# [htmllogdir]
+# [logdir]
 #   This required option specifies where the HTML logfiles
 #   are kept.
-# [timelogformat ("%H:%M")]
-#   Timestamp format for the messages. The usual date(1) format
-#   string.
-# [extrahead ("much css")]
-#   Extra snippet of HTML to include in the HTML header of
-#   each file. The default is a snippet of CSS to nicely
-#   format the log table, but you can overwrite this completely
-#   by specifying this option. It could also include Javascript
-#   if you wanted. See Cinch::LogPlus::DEFAULT_CSS for the default
-#   value of this option.
 #
 # == Author
 # Marvin Gülker (Quintus)
+# modified by carstene1ns
 #
 # == License
 # An advanced logging plugin for Cinch.
@@ -85,10 +69,7 @@ end
 class Cinch::LogPlus
   include Cinch::Plugin
 
-  set :required_options, [:plainlogdir, :htmllogdir]
-
-  match /log stop/, :method => :cmd_log_stop
-  match /log start/, :method => :cmd_log_start
+  set :required_options, [:logdir]
 
   listen_to :connect,    :method => :startup
   listen_to :channel,    :method => :log_public_message
@@ -169,14 +150,11 @@ class Cinch::LogPlus
 
   # Called on connect, sets up everything.
   def startup(*)
-    @plainlogdir = config[:plainlogdir]
-    @htmllogdir  = config[:htmllogdir]
-    @timelogformat = config[:timelogformat] = "%H:%M"
-    @extrahead = config[:extrahead] || DEFAULT_CSS
-    @stopped = false
+    @htmllogdir  = config[:logdir]
+    @timelogformat = "%H:%M:%S"
+    @extrahead = DEFAULT_CSS
 
     @last_time_check = Time.now
-    @plainlogfile    = nil
     @htmllogfile     = nil
 
     @filemutex = Mutex.new
@@ -188,7 +166,6 @@ class Cinch::LogPlus
     at_exit do
       @filemutex.synchronize do
         @htmllogfile.close
-        @plainlogfile.close
       end
     end
   end
@@ -203,46 +180,12 @@ class Cinch::LogPlus
     @last_time_check = time
   end
 
-  def cmd_log_stop(msg)
-    if @stopped
-      msg.reply "I do not log currently."
-      return
-    end
-
-    unless msg.channel.opped?(msg.user)
-      msg.reply "You are not authorized to command me so!"
-      return
-    end
-
-    msg.reply "I see. I will close down my ears so everything that follows remains private."
-    @stopped = true
-  end
-
-  def cmd_log_start(msg)
-    unless @stopped
-      msg.reply "I am logging the conversation already."
-      return
-    end
-
-    unless msg.channel.opped?(msg.user)
-      msg.reply "You are not authorized to command me so!"
-      return
-    end
-
-    msg.reply "OK. Everything that follows will be logged again."
-    @stopped = false
-  end
-
   # Target for all public channel messages/actions not issued by the bot.
   def log_public_message(msg)
-    return if @stopped
-
     @filemutex.synchronize do
       if msg.action?
-        log_plaintext_action(msg)
         log_html_action(msg)
       else
-        log_plaintext_message(msg)
         log_html_message(msg)
       end
     end
@@ -250,57 +193,40 @@ class Cinch::LogPlus
 
   # Target for all messages issued by the bot.
   def log_own_message(msg, text, is_notice, is_private)
-    return if @stopped
     return if is_private # Do not log messages not targetted at the channel
 
     @filemutex.synchronize do
-      log_own_plainmessage(text, is_notice)
       log_own_htmlmessage(text, is_notice)
     end
   end
 
   # Target for /topic commands.
   def log_topic(msg)
-    return if @stopped
-
     @filemutex.synchronize do
-      log_plaintext_topic(msg)
       log_html_topic(msg)
     end
   end
 
   def log_nick(msg)
-    return if @stopped
-
     @filemutex.synchronize do
-      log_plaintext_nick(msg)
       log_html_nick(msg)
     end
   end
 
   def log_join(msg)
-    return if @stopped
-
     @filemutex.synchronize do
-      log_plaintext_join(msg)
       log_html_join(msg)
     end
   end
 
   def log_leaving(msg, leaving_user)
-    return if @stopped
-
     @filemutex.synchronize do
-      log_plaintext_leaving(msg, leaving_user)
       log_html_leaving(msg, leaving_user)
     end
   end
 
   def log_modechange(msg, ary)
-    return if @stopped
-
     @filemutex.synchronize do
-      log_plaintext_modechange(msg, ary)
       log_html_modechange(msg, ary)
     end
   end
@@ -369,27 +295,9 @@ class Cinch::LogPlus
           start_html_file
         end
       end
-
-      #### plain log file ####
-      # This one is easier, we can just open plaintext files in append mode
-      # (they have no preamble and postamble)
-
-      # Close plain file if existing (startup!)
-      @plainlogfile.close if @plainlogfile
-      @plainlogfile = File.open(File.join(@plainlogdir, genfilename(".log")), "a")
-      @plainlogfile.sync = true
     end
 
     bot.info("Opened new logfiles.")
-  end
-
-  # Logs the given message to the plaintext logfile.
-  # Does NOT acquire the file mutex!
-  def log_plaintext_message(msg)
-    @plainlogfile.puts(sprintf("%{time} %{nick} | %{msg}",
-                               :time => msg.time.strftime(@timelogformat),
-                               :nick => msg.user.to_s,
-                               :msg => msg.message))
   end
 
   # Logs the given message to the HTML logfile.
@@ -406,16 +314,7 @@ class Cinch::LogPlus
     @htmllogfile.write(str)
   end
 
-  # Logs the given text to the plaintext logfile. Does NOT
-  # acquire the file mutex!
-  def log_own_plainmessage(text, is_notice)
-    @plainlogfile.puts(sprintf("%{time} %{nick} | %{msg}",
-                               :time => Time.now.strftime(@timelogformat),
-                               :nick => bot.nick,
-                               :msg => text))
-  end
-
-  # Logs the given text to the plaintext logfile. Does NOT
+  # Logs the given text to the HTML logfile. Does NOT
   # acquire the file mutex!
   def log_own_htmlmessage(text, is_notice)
     time = Time.now
@@ -426,15 +325,6 @@ class Cinch::LogPlus
         <td class="msgmessage">#{CGI.escape_html(text)}</td>
       </tr>
     HTML
-  end
-
-  # Logs the given action to the plaintext logfile. Does NOT
-  # acquire the file mutex!
-  def log_plaintext_action(msg)
-    @plainlogfile.puts(sprintf("%{time} **%{nick} %{msg}",
-                               :time => msg.time.strftime(@timelogformat),
-                               :nick => msg.user.name,
-                               :msg => msg.action_message))
   end
 
   # Logs the given action to the HTML logfile Does NOT
@@ -453,15 +343,6 @@ class Cinch::LogPlus
 
   # Logs the given topic change to the HTML logfile. Does NOT
   # acquire the file mutex!
-  def log_plaintext_topic(msg)
-    @plainlogfile.puts(sprintf("%{time} *%{nick} changed the topic to “%{msg}”.",
-                       :time => msg.time.strftime(@timelogformat),
-                       :nick => msg.user.name,
-                       :msg => msg.message))
-  end
-
-  # Logs the given topic change to the HTML logfile. Does NOT
-  # acquire the file mutex!
   def log_html_topic(msg)
     @htmllogfile.write(<<-HTML)
       <tr id="#{timestamp_anchor(msg.time)}">
@@ -470,14 +351,6 @@ class Cinch::LogPlus
         <td class="msgtopic"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;changed the topic to “#{CGI.escape_html(msg.message)}”.</td>
       </tr>
     HTML
-  end
-
-  def log_plaintext_nick(msg)
-    oldnick = msg.raw.match(/^:(.*?)!/)[1]
-    @plainlogfile.puts(sprintf("%{time} --%{oldnick} is now known as %{newnick}",
-                               :time => msg.time.strftime(@timelogformat),
-                               :oldnick => oldnick,
-                               :newnick => msg.message))
   end
 
   def log_html_nick(msg)
@@ -491,13 +364,6 @@ class Cinch::LogPlus
     HTML
   end
 
-  def log_plaintext_join(msg)
-    @plainlogfile.puts(sprintf("%{time} -->%{nick} entered %{channel}.",
-                               :time => msg.time.strftime(@timelogformat),
-                               :nick => msg.user.name,
-                               :channel => msg.channel.name))
-  end
-
   def log_html_join(msg)
     @htmllogfile.write(<<-HTML)
       <tr id="#{timestamp_anchor(msg.time)}">
@@ -506,19 +372,6 @@ class Cinch::LogPlus
         <td class="msgjoin"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;entered #{msg.channel.name}.</td>
       </tr>
     HTML
-  end
-
-  def log_plaintext_leaving(msg, leaving_user)
-    if msg.channel?
-      text = "%{nick} left #{msg.channel.name} (%{msg})"
-    else
-      text = "%{nick} left the IRC network (%{msg})"
-    end
-
-    @plainlogfile.puts(sprintf("%{time} <--#{text}",
-                               :time => msg.time.strftime(@timelogformat),
-                               :nick => leaving_user.name,
-                               :msg => msg.message))
   end
 
   def log_html_leaving(msg, leaving_user)
@@ -535,24 +388,6 @@ class Cinch::LogPlus
         <td class="msgleave"><span class="actionnick #{determine_status(msg)}">#{leaving_user.name}</span>&nbsp;#{text}.</td>
       </tr>
     HTML
-  end
-
-  def log_plaintext_modechange(msg, changes)
-    adds = changes.select{|subary| subary[0] == :add}
-    removes = changes.select{|subary| subary[0] == :remove}
-
-    change = ""
-    unless removes.empty?
-      change += removes.reduce("-"){|str, subary| str + subary[1] + (subary[2] ? " " + subary[2] : "")}.rstrip
-    end
-    unless adds.empty?
-      change += adds.reduce("+"){|str, subary| str + subary[1] + (subary[2] ? " " + subary[2] : "")}.rstrip
-    end
-
-    @plainlogfile.puts(sprintf("%{time} mode %{change} by %{nick}",
-                               :time => msg.time.strftime(@timelogformat),
-                               :nick => msg.user.name,
-                               :change => change))
   end
 
   def log_html_modechange(msg, changes)
