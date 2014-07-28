@@ -184,10 +184,27 @@ class Cinch::LogPlus
   def log_public_message(msg)
     @filemutex.synchronize do
       if msg.action?
-        log_html_action(msg)
+        # Logs the given action to the HTML logfile Does NOT
+        # acquire the file mutex!
+        str = <<-HTML
+          <tr id="#{timestamp_anchor(msg.time)}">
+            <td class="msgtime">#{timestamp_link(msg.time)}</td>
+            <td class="msgnick">*</td>
+            <td class="msgaction"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;#{CGI.escape_html(msg.action_message)}</td>
+          </tr>
+        HTML
       else
-        log_html_message(msg)
+        # Logs the given message to the HTML logfile.
+        # Does NOT acquire the file mutex!
+        str = <<-HTML
+          <tr id="#{timestamp_anchor(msg.time)}">
+            <td class="msgtime">#{timestamp_link(msg.time)}</td>
+            <td class="msgnick #{determine_status(msg)}">#{msg.user}</td>
+            <td class="msgmessage">#{CGI.escape_html(msg.message)}</td>
+          </tr>
+        HTML
       end
+      @htmllogfile.write(str)
     end
   end
 
@@ -196,38 +213,97 @@ class Cinch::LogPlus
     return if is_private # Do not log messages not targetted at the channel
 
     @filemutex.synchronize do
-      log_own_htmlmessage(text, is_notice)
+      # Logs the given text to the HTML logfile. Does NOT
+      # acquire the file mutex!
+      time = Time.now
+      @htmllogfile.puts(<<-HTML)
+        <tr id="#{timestamp_anchor(time)}">
+          <td class="msgtime">#{timestamp_link(msg.time)}</td>
+          <td class="msgnick selfbot">#{bot.nick}</td>
+          <td class="msgmessage">#{CGI.escape_html(text)}</td>
+        </tr>
+      HTML
     end
   end
 
   # Target for /topic commands.
   def log_topic(msg)
     @filemutex.synchronize do
-      log_html_topic(msg)
+      # Logs the given topic change to the HTML logfile. Does NOT
+      # acquire the file mutex!
+      @htmllogfile.write(<<-HTML)
+        <tr id="#{timestamp_anchor(msg.time)}">
+          <td class="msgtime">#{timestamp_link(msg.time)}</td>
+          <td class="msgnick">*</td>
+          <td class="msgtopic"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;changed the topic to “#{CGI.escape_html(msg.message)}”.</td>
+        </tr>
+      HTML
     end
   end
 
   def log_nick(msg)
     @filemutex.synchronize do
-      log_html_nick(msg)
+      oldnick = msg.raw.match(/^:(.*?)!/)[1]
+      @htmllogfile.write(<<-HTML)
+        <tr id="#{timestamp_anchor(msg.time)}">
+          <td class="msgtime">#{timestamp_link(msg.time)}</td>
+          <td class="msgnick">--</td>
+          <td class="msgnickchange"><span class="actionnick #{determine_status(msg, oldnick)}">#{oldnick}</span>&nbsp;is now known as <span class="actionnick #{determine_status(msg, msg.message)}">#{msg.message}</span>.</td>
+        </tr>
+      HTML
     end
   end
 
   def log_join(msg)
     @filemutex.synchronize do
-      log_html_join(msg)
+      @htmllogfile.write(<<-HTML)
+        <tr id="#{timestamp_anchor(msg.time)}">
+          <td class="msgtime">#{timestamp_link(msg.time)}</td>
+          <td class="msgnick">--&gt;</td>
+          <td class="msgjoin"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;entered #{msg.channel.name}.</td>
+        </tr>
+      HTML
     end
   end
 
   def log_leaving(msg, leaving_user)
     @filemutex.synchronize do
-      log_html_leaving(msg, leaving_user)
+      if msg.channel?
+        text = "left #{msg.channel.name} (#{CGI.escape_html(msg.message)})"
+      else
+        text = "left the IRC network (#{CGI.escape_html(msg.message)})"
+      end
+
+      @htmllogfile.write(<<-HTML)
+        <tr id="#{timestamp_anchor(msg.time)}">
+          <td class="msgtime">#{timestamp_link(msg.time)}</td>
+          <td class="msgnick">&lt;--</td>
+          <td class="msgleave"><span class="actionnick #{determine_status(msg)}">#{leaving_user.name}</span>&nbsp;#{text}.</td>
+        </tr>
+      HTML
     end
   end
 
-  def log_modechange(msg, ary)
+  def log_modechange(msg, changes)
     @filemutex.synchronize do
-      log_html_modechange(msg, ary)
+      adds = changes.select{|subary| subary[0] == :add}
+      removes = changes.select{|subary| subary[0] == :remove}
+
+      change = ""
+      unless removes.empty?
+        change += removes.reduce("-"){|str, subary| str + subary[1] + (subary[2] ? " " + subary[2] : "")}.rstrip
+      end
+      unless adds.empty?
+        change += adds.reduce("+"){|str, subary| str + subary[1] + (subary[2] ? " " + subary[2] : "")}.rstrip
+      end
+
+      @htmllogfile.write(<<-HTML)
+        <tr id="#{timestamp_anchor(msg.time)}">
+          <td class="msgtime">#{timestamp_link(msg.time)}</td>
+          <td class="msgnick">--</td>
+          <td class="msgmode">Mode #{change} by <span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>.</td>
+        </tr>
+      HTML
     end
   end
 
@@ -268,7 +344,7 @@ class Cinch::LogPlus
 
       # If the bot was restarted, an HTML logfile already exists.
       # We want to continue that one rather than overwrite.
-      htmlfile = File.join(@htmllogdir, genfilename(".log.html"))
+      htmlfile = File.join(@htmllogdir, genfilename(".html"))
       if @htmllogfile
         if File.exist?(htmlfile)
           # This shouldn’t happen (would be a useless call of reopen_logs)
@@ -300,119 +376,12 @@ class Cinch::LogPlus
     bot.info("Opened new logfiles.")
   end
 
-  # Logs the given message to the HTML logfile.
-  # Does NOT acquire the file mutex!
-  def log_html_message(msg)
-    str = <<-HTML
-      <tr id="#{timestamp_anchor(msg.time)}">
-        <td class="msgtime">#{msg.time.strftime(@timelogformat)}</td>
-        <td class="msgnick #{determine_status(msg)}">#{msg.user}</td>
-        <td class="msgmessage">#{CGI.escape_html(msg.message)}</td>
-      </tr>
-    HTML
-
-    @htmllogfile.write(str)
-  end
-
-  # Logs the given text to the HTML logfile. Does NOT
-  # acquire the file mutex!
-  def log_own_htmlmessage(text, is_notice)
-    time = Time.now
-    @htmllogfile.puts(<<-HTML)
-      <tr id="#{timestamp_anchor(time)}">
-        <td class="msgtime">#{time.strftime(@timelogformat)}</td>
-        <td class="msgnick selfbot">#{bot.nick}</td>
-        <td class="msgmessage">#{CGI.escape_html(text)}</td>
-      </tr>
-    HTML
-  end
-
-  # Logs the given action to the HTML logfile Does NOT
-  # acquire the file mutex!
-  def log_html_action(msg)
-    str = <<-HTML
-      <tr id="#{timestamp_anchor(msg.time)}">
-        <td class="msgtime">#{msg.time.strftime(@timelogformat)}</td>
-        <td class="msgnick">*</td>
-        <td class="msgaction"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;#{CGI.escape_html(msg.action_message)}</td>
-      </tr>
-    HTML
-
-    @htmllogfile.write(str)
-  end
-
-  # Logs the given topic change to the HTML logfile. Does NOT
-  # acquire the file mutex!
-  def log_html_topic(msg)
-    @htmllogfile.write(<<-HTML)
-      <tr id="#{timestamp_anchor(msg.time)}">
-        <td class="msgtime">#{msg.time.strftime(@timelogformat)}</td>
-        <td class="msgnick">*</td>
-        <td class="msgtopic"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;changed the topic to “#{CGI.escape_html(msg.message)}”.</td>
-      </tr>
-    HTML
-  end
-
-  def log_html_nick(msg)
-    oldnick = msg.raw.match(/^:(.*?)!/)[1]
-    @htmllogfile.write(<<-HTML)
-      <tr id="#{timestamp_anchor(msg.time)}">
-        <td class="msgtime">#{msg.time.strftime(@timelogformat)}</td>
-        <td class="msgnick">--</td>
-        <td class="msgnickchange"><span class="actionnick #{determine_status(msg, oldnick)}">#{oldnick}</span>&nbsp;is now known as <span class="actionnick #{determine_status(msg, msg.message)}">#{msg.message}</span>.</td>
-      </tr>
-    HTML
-  end
-
-  def log_html_join(msg)
-    @htmllogfile.write(<<-HTML)
-      <tr id="#{timestamp_anchor(msg.time)}">
-        <td class="msgtime">#{msg.time.strftime(@timelogformat)}</td>
-        <td class="msgnick">--&gt;</td>
-        <td class="msgjoin"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;entered #{msg.channel.name}.</td>
-      </tr>
-    HTML
-  end
-
-  def log_html_leaving(msg, leaving_user)
-    if msg.channel?
-      text = "left #{msg.channel.name} (#{CGI.escape_html(msg.message)})"
-    else
-      text = "left the IRC network (#{CGI.escape_html(msg.message)})"
-    end
-
-    @htmllogfile.write(<<-HTML)
-      <tr id="#{timestamp_anchor(msg.time)}">
-        <td class="msgtime">#{msg.time.strftime(@timelogformat)}</td>
-        <td class="msgnick">&lt;--</td>
-        <td class="msgleave"><span class="actionnick #{determine_status(msg)}">#{leaving_user.name}</span>&nbsp;#{text}.</td>
-      </tr>
-    HTML
-  end
-
-  def log_html_modechange(msg, changes)
-    adds = changes.select{|subary| subary[0] == :add}
-    removes = changes.select{|subary| subary[0] == :remove}
-
-    change = ""
-    unless removes.empty?
-      change += removes.reduce("-"){|str, subary| str + subary[1] + (subary[2] ? " " + subary[2] : "")}.rstrip
-    end
-    unless adds.empty?
-      change += adds.reduce("+"){|str, subary| str + subary[1] + (subary[2] ? " " + subary[2] : "")}.rstrip
-    end
-
-    @htmllogfile.write(<<-HTML)
-      <tr id="#{timestamp_anchor(msg.time)}">
-        <td class="msgtime">#{msg.time.strftime(@timelogformat)}</td>
-        <td class="msgnick">--</td>
-        <td class="msgmode">Mode #{change} by <span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>.</td>
-      </tr>
-    HTML
-  end
-
   def timestamp_anchor(time)
-    "msg-#{time.iso8601}"
+    "msg-#{time.strftime("%H:%M:%S")}"
+  end
+
+  def timestamp_link(time)
+    "<a href=\"#msg-#{time.strftime("%H:%M:%S")}\">[#{time.strftime(@timelogformat)}]</a>"
   end
 
   # Write the start bloat HTML to the HTML log file.
