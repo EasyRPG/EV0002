@@ -73,7 +73,7 @@ bot = Cinch::Bot.new do
   }
 
   config.plugins.options[Cinch::LogPlus] = {
-    :logdir => "/tmp/logs",
+    :logdir => $secrets["html_log"]["path"]
   }
 
   # log to file
