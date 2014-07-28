@@ -10,6 +10,7 @@ require_relative "plugins/easyrpg_links"
 require_relative "plugins/link_github_issues"
 require_relative "plugins/http_server"
 require_relative "plugins/github_webhooks"
+require_relative "plugins/logplus"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -34,7 +35,8 @@ bot = Cinch::Bot.new do
                           Cinch::Plugins::Seen,
                           Cinch::Plugins::Identify,
                           Cinch::HttpServer,
-                          Cinch::GitHubWebhooks
+                          Cinch::GitHubWebhooks,
+                          Cinch::LogPlus
                         ]
   end
 
@@ -68,6 +70,12 @@ bot = Cinch::Bot.new do
 
   config.plugins.options[Cinch::GitHubWebhooks] = {
     :secret => $secrets["github_hooks"]["secret"]
+  }
+
+  config.plugins.options[Cinch::LogPlus] = {
+    :plainlogdir => "/tmp/logs",
+    :htmllogdir  => "/tmp/logs",
+    :timelogformat => "%H:%M"
   }
 
   # log to file

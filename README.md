@@ -36,3 +36,6 @@ Acknowledgements
 
 plugins/http_server.rb by [Quintus](https://github.com/Quintus), under LGPL license -
 from https://github.com/Quintus/cinch-plugins
+
+plugins/logplus.rb by [Quintus](https://github.com/Quintus), under LGPL license -
+from https://github.com/Quintus/cinch-plugins
