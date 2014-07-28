@@ -8,6 +8,7 @@
 #
 #   config.plugins.options[Cinch::LogPlus] = {
 #     :logdir => "/tmp/logs/htmllogs", # required
+#     :logurl => "http://localhost/" # required
 #   }
 #
 # [logdir]
@@ -37,6 +38,7 @@
 
 require "cgi"
 require "time"
+require "chronic"
 
 # Cinch’s :channel event does not include messages Cinch sent itself.
 # Especially for logging this is really bad, because the messages sent
@@ -80,6 +82,9 @@ class Cinch::LogPlus
   listen_to :nick,       :method => :log_nick
   listen_to :mode_change,:method => :log_modechange
   timer 60,              :method => :check_midnight
+
+  match /log (.+)$/, method: :link_log
+  match "log", method: :link_log_today
 
   # Default CSS used when the :extrahead option is not given.
   # Some default styling.
@@ -176,6 +181,21 @@ class Cinch::LogPlus
     reopen_logs unless @last_time_check.day == time.day
 
     @last_time_check = time
+  end
+
+  def link_log_today(msg)
+    self.link_log(msg, "today")
+  end
+
+  def link_log(msg, sometime)
+    # throw whatever time spec the user wanted at chronic gem
+    requested_date = Chronic.parse(sometime, :context => :past)
+
+    if requested_date.nil?
+      msg.reply "I really have no idea which logfile you want…"
+    else
+      msg.reply "#{config[:logurl]}/#{requested_date.strftime('%Y-%m-%d')}.html"
+    end
   end
 
   # Target for all public channel messages/actions not issued by the bot.

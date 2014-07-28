@@ -6,3 +6,4 @@ gem 'cinch-identify', '~> 1.6.0'
 gem "json"
 gem "thin"
 gem "sinatra"
+gem "chronic"

@@ -16,6 +16,7 @@ Needed gems beside `cinch` are (see Gemfile for details):
  * json
  * thin
  * sinatra
+ * chronic
 
 You can use bundler to install the dependencies.
 
