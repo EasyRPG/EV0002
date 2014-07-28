@@ -85,66 +85,64 @@ class Cinch::LogPlus
   # Some default styling.
   DEFAULT_CSS = <<-EOC
     <style type="text/css">
-    body {
-       background-color: white;
-    }
-    .chattable {
+      body {
+        background: white;
+        color: black;
+        font: 0.9em "Droid Sans Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",
+              "Liberation Mono", "Nimbus Mono L", Monaco, Consolas, "Lucida Console",
+              "Lucida Sans Typewriter", "Courier New", monospace;
+      }
+      .chattable {
         border-collapse: collapse;
-     }
-    .msgnick {
-        border-right: 1px solid black;
+      }
+      .msgnick {
+        border-style: solid;
+        border-color: #999;
+        border-width: 0 1px;
+        padding: 0 8px;
+      }
+      .msgtime {
         padding-right: 8px;
-        padding-left: 4px;
-    }
-    .opped {
-        color: #006e21;
-        font-weight: bold;
-     }
-     .halfopped {
-        color: #006e21;
-     }
-    .voiced {
-        color: #00a5ff;
-        font-style: italic;
-     }
-     .selfbot {
-       color: #920002;
-     }
-    .msgmessage {
+      }
+      .msgtime a {
+        text-decoration:none;
+      }
+      .msgmessage {
         padding-left: 8px;
-    }
-    .msgaction {
-       padding-left: 8px;
-       font-style: italic;
-    }
-    .msgtopic {
-       padding-left: 8px;
-       font-weight: bold;
-       font-style: italic;
-       color: #920002;
-    }
-    .msgnickchange {
-       padding-left: 8px;
-       font-weight: bold;
-       font-style: italic;
-       color: #820002;
-    }
-    .msgmode {
-       padding-left: 8px;
-       font-weight: bold;
-       font-style: italic;
-       color: #920002;
-    }
-    .msgjoin {
-       padding-left: 8px;
-       font-style: italic;
-       color: green;
-    }
-    .msgleave {
-       padding-left: 8px;
-       font-style: italic;
-       color: red;
-    }
+        white-space: pre-wrap;
+      }
+      .msgaction {
+        padding-left: 8px;
+        font-style: italic;
+      }
+      .msgtopic {
+        padding-left: 8px;
+        font-weight: bold;
+        font-style: italic;
+        color: #920002;
+      }
+      .msgnickchange {
+        padding-left: 8px;
+        font-weight: bold;
+        font-style: italic;
+        color: #820002;
+      }
+      .msgmode {
+        padding-left: 8px;
+        font-weight: bold;
+        font-style: italic;
+        color: #920002;
+      }
+      .msgjoin {
+        padding-left: 8px;
+        font-style: italic;
+        color: green;
+      }
+      .msgleave {
+        padding-left: 8px;
+        font-style: italic;
+        color: red;
+      }
     </style>
   EOC
 
@@ -190,7 +188,7 @@ class Cinch::LogPlus
           <tr id="#{timestamp_anchor(msg.time)}">
             <td class="msgtime">#{timestamp_link(msg.time)}</td>
             <td class="msgnick">*</td>
-            <td class="msgaction"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;#{CGI.escape_html(msg.action_message)}</td>
+            <td class="msgaction"><span class="actionnick">#{determine_status(msg)}#{msg.user.name}</span>&nbsp;#{CGI.escape_html(msg.action_message)}</td>
           </tr>
         HTML
       else
@@ -199,7 +197,7 @@ class Cinch::LogPlus
         str = <<-HTML
           <tr id="#{timestamp_anchor(msg.time)}">
             <td class="msgtime">#{timestamp_link(msg.time)}</td>
-            <td class="msgnick #{determine_status(msg)}">#{msg.user}</td>
+            <td class="msgnick">#{determine_status(msg)}#{msg.user}</td>
             <td class="msgmessage">#{CGI.escape_html(msg.message)}</td>
           </tr>
         HTML
@@ -218,8 +216,8 @@ class Cinch::LogPlus
       time = Time.now
       @htmllogfile.puts(<<-HTML)
         <tr id="#{timestamp_anchor(time)}">
-          <td class="msgtime">#{timestamp_link(msg.time)}</td>
-          <td class="msgnick selfbot">#{bot.nick}</td>
+          <td class="msgtime">#{timestamp_link(time)}</td>
+          <td class="msgnick">:#{bot.nick}</td>
           <td class="msgmessage">#{CGI.escape_html(text)}</td>
         </tr>
       HTML
@@ -235,7 +233,7 @@ class Cinch::LogPlus
         <tr id="#{timestamp_anchor(msg.time)}">
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">*</td>
-          <td class="msgtopic"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;changed the topic to “#{CGI.escape_html(msg.message)}”.</td>
+          <td class="msgtopic"><span class="actionnick">#{determine_status(msg)}#{msg.user.name}</span>&nbsp;changed the topic to “#{CGI.escape_html(msg.message)}”.</td>
         </tr>
       HTML
     end
@@ -248,7 +246,7 @@ class Cinch::LogPlus
         <tr id="#{timestamp_anchor(msg.time)}">
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">--</td>
-          <td class="msgnickchange"><span class="actionnick #{determine_status(msg, oldnick)}">#{oldnick}</span>&nbsp;is now known as <span class="actionnick #{determine_status(msg, msg.message)}">#{msg.message}</span>.</td>
+          <td class="msgnickchange"><span class="actionnick">#{determine_status(msg, oldnick)}#{oldnick}</span>&nbsp;is now known as <span class="actionnick">#{determine_status(msg, msg.message)}#{msg.message}</span>.</td>
         </tr>
       HTML
     end
@@ -260,7 +258,7 @@ class Cinch::LogPlus
         <tr id="#{timestamp_anchor(msg.time)}">
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">--&gt;</td>
-          <td class="msgjoin"><span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>&nbsp;entered #{msg.channel.name}.</td>
+          <td class="msgjoin"><span class="actionnick">#{determine_status(msg)}#{msg.user.name}</span>&nbsp;entered #{msg.channel.name}.</td>
         </tr>
       HTML
     end
@@ -278,7 +276,7 @@ class Cinch::LogPlus
         <tr id="#{timestamp_anchor(msg.time)}">
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">&lt;--</td>
-          <td class="msgleave"><span class="actionnick #{determine_status(msg)}">#{leaving_user.name}</span>&nbsp;#{text}.</td>
+          <td class="msgleave"><span class="actionnick">#{determine_status(msg)}#{leaving_user.name}</span>&nbsp;#{text}.</td>
         </tr>
       HTML
     end
@@ -301,7 +299,7 @@ class Cinch::LogPlus
         <tr id="#{timestamp_anchor(msg.time)}">
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">--</td>
-          <td class="msgmode">Mode #{change} by <span class="actionnick #{determine_status(msg)}">#{msg.user.name}</span>.</td>
+          <td class="msgmode">Mode #{change} by <span class="actionnick">#{determine_status(msg)}#{msg.user.name}</span>.</td>
         </tr>
       HTML
     end
@@ -325,13 +323,13 @@ class Cinch::LogPlus
     user = user.name if user.kind_of?(Cinch::User)
 
     if user == bot.nick
-      "selfbot"
+      ":"
     elsif msg.channel.opped?(user)
-      "opped"
+      "@"
     elsif msg.channel.half_opped?(user)
-      "halfopped"
+      "%"
     elsif msg.channel.voiced?(user)
-      "voiced"
+      "+"
     else
       ""
     end
@@ -381,7 +379,7 @@ class Cinch::LogPlus
   end
 
   def timestamp_link(time)
-    "<a href=\"#msg-#{time.strftime("%H:%M:%S")}\">[#{time.strftime(@timelogformat)}]</a>"
+    "<a href=\"#msg-#{time.strftime("%H:%M:%S")}\">#{time.strftime(@timelogformat)}</a>"
   end
 
   # Write the start bloat HTML to the HTML log file.
@@ -391,21 +389,17 @@ class Cinch::LogPlus
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>Chatlogs #{bot.config.channels.first} #{Time.now.strftime('%Y-%m-%d')}</title>
+    <title>#{bot.config.channels.first} IRC logs, #{Time.now.strftime('%Y-%m-%d')}</title>
     <meta charset="utf-8"/>
 #{@extrahead}
   </head>
   <body>
-    <h1>Chatlogs for #{bot.config.channels.first}, #{Time.now.strftime('%Y-%m-%d')}</h1>
-    <p>Nick colors:</p>
-    <dl>
-      <dt class="opped">Nick</dt><dd>Channel operator (+o)</dd>
-      <dt class="halfopped">Nick</dt><dd>Channel half-operator (+h)</dd>
-      <dt class="voiced">Nick</dt><dd>Nick is voiced (+v)</dd>
-      <dt class="selfbot">Nick</dt><dd>The logging bot itself</dd>
-      <dt>Nick</dt><dd>Normal nick</dd>
-    </dl>
-    <p>All times are UTC#{Time.now.strftime('%:z')}.</p>
+    <h1>#{bot.config.channels.first} IRC logs, #{Time.now.strftime('%Y-%m-%d')}</h1>
+    <p>
+      All times are UTC#{Time.now.strftime('%:z')}.
+      <a href="#{Date.today.prev_day.strftime('%Y-%m-%d')}.html">&lt;==</a>
+      <a href="#{Date.today.next_day.strftime('%Y-%m-%d')}.html">==&gt;</a>
+    </p>
     <hr/>
     <table class="chattable">
     HTML
