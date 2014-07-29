@@ -12,6 +12,7 @@ require_relative "plugins/http_server"
 require_relative "plugins/github_webhooks"
 require_relative "plugins/logplus"
 require_relative "plugins/dokuwiki_xmlrpc"
+require_relative "plugins/blog_webhooks"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -38,7 +39,8 @@ bot = Cinch::Bot.new do
                           Cinch::HttpServer,
                           Cinch::GitHubWebhooks,
                           Cinch::LogPlus,
-                          Cinch::DokuwikiXMLRPC
+                          Cinch::DokuwikiXMLRPC,
+                          Cinch::BlogWebhooks
                         ]
   end
 
