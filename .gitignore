@@ -1,6 +1,14 @@
 
+# plugin data
 /data/bot.log
 /data/seen.yml
 /data/webhooks.log
 
+# passwords
 /secrets.yml
+
+# local config
+/.bundle
+
+# local gem folder
+/.gems

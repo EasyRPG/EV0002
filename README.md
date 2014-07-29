@@ -11,19 +11,28 @@ Installation
 
 Needed gems beside `cinch` are (see Gemfile for details):
 
- * cinch-seen
- * cinch-identify
- * json
- * thin
- * sinatra
- * chronic
+ * [cinch-seen](https://github.com/bhaberer/cinch-seen)
+ * [cinch-identify](https://github.com/cinchrb/cinch-identify)
+ * [json](http://flori.github.io/json/)
+ * [thin](http://code.macournoyer.com/thin/)
+ * [sinatra](http://sinatrarb.com/)
+ * [chronic](https://github.com/mojombo/chronic)
 
 You can use bundler to install the dependencies.
 
-    $ bundle
+    $ bundle install [--path .gems]
+
+If you provide the path argument, gems will be installed locally.
 
 Secret values (passwords and such) are read from a file `secrets.yml` on startup.
 A template is provided, you need to copy it and fill in the values.
+
+Running
+-------
+
+	$ bundle exec ./EV0002.rb
+
+If you did not install the gems locally with bundler, you can leave out the `bundle exec`
 
 LICENSE
 -------
@@ -40,3 +49,36 @@ from https://github.com/Quintus/cinch-plugins
 
 plugins/logplus.rb by [Quintus](https://github.com/Quintus), under LGPL license -
 from https://github.com/Quintus/cinch-plugins
+
+Plugins
+-------
+
+ * plugins/link_github_issues.rb:
+   Takes a list of available projects and links corresponding issues when an user sends
+   a message containing `<project>#<number>`. Uses GitHub json api to find issue title,
+   state and url
+
+ * plugins/logplus.rb:
+   Heavily modified version of Quintus' plugin, see above. Generates HTML logs and links
+   a corresponding log file, when a user uses the `log` command with a human readable
+   time specification, e.g. `log monday last week`
+
+ * plugins/http_server.rb:
+   Helper plugin by Quintus, see above. Provides the webserver used by the Webhook
+   plugins.
+
+ * plugins/dokuwiki_xmlrpc.rb:
+   Simple plugin to use Dokuwiki's XMLRPC api. Currently only provides search
+   functionality and the wiki URL.
+
+ * plugins/easyrpg_links.rb:
+   Simple plugin that links webservices related to the EasyRPG project.
+
+ * plugins/asciifood.rb:
+   Fun plugin, that outputs something to drink or eat.
+
+ * plugins/github_webhooks.rb:
+   Uses GitHub webhooks to provide channel notifications, when something happens on a
+   monitored GitHub project. This uses the webserver provided by http_server.rb and
+   relies on the GitHub api of course. Similiar plugins are names `octospy` for other
+   bot frameworks.
