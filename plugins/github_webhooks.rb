@@ -53,12 +53,17 @@ class Cinch::GitHubWebhooks
     # handle event
     case event
     when "issues"
-      # opened and closed issues
+      # (re-)opened and closed issues
+
+      action = data["action"]
+
+      # we ignore labels and assignees
+      halt 204 if ['assigned', 'unassigned', 'labeled', 'unlabeled'].include? action
 
       template = "%s %s issue %i of %s: \"%s\" - %s"
       message = sprintf(template,
                         user,
-                        data["action"],
+                        action,
                         data["issue"]["number"],
                         repo,
                         data["issue"]["title"],
