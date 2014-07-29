@@ -13,7 +13,6 @@ class Cinch::EasyRPGLinks
   match "web", method: :link_web
   match "blog", method: :link_blog
   match "forums", method: :link_forums
-  match "wiki", method: :link_wiki
   match "jenkins", method: :link_jenkins
   match "twitter", method: :link_twitter
   match "identica", method: :link_identica
@@ -45,10 +44,6 @@ class Cinch::EasyRPGLinks
 
   def link_forums(msg)
     msg.reply "https://easy-rpg.org/forums/"
-  end
-
-  def link_wiki(msg)
-    msg.reply "https://easy-rpg.org/wiki/"
   end
 
   def link_jenkins(msg)

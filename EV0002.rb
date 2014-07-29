@@ -11,6 +11,7 @@ require_relative "plugins/link_github_issues"
 require_relative "plugins/http_server"
 require_relative "plugins/github_webhooks"
 require_relative "plugins/logplus"
+require_relative "plugins/dokuwiki_xmlrpc"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -36,7 +37,8 @@ bot = Cinch::Bot.new do
                           Cinch::Plugins::Identify,
                           Cinch::HttpServer,
                           Cinch::GitHubWebhooks,
-                          Cinch::LogPlus
+                          Cinch::LogPlus,
+                          Cinch::DokuwikiXMLRPC
                         ]
   end
 
@@ -75,6 +77,15 @@ bot = Cinch::Bot.new do
   config.plugins.options[Cinch::LogPlus] = {
     :logdir => $secrets["html_log"]["path"],
     :logurl => $secrets["html_log"]["url"]
+  }
+
+  config.plugins.options[Cinch::DokuwikiXMLRPC] = {
+    :user => $secrets["dokuwiki"]["user"],
+    :password => $secrets["dokuwiki"]["password"],
+    :host => "easy-rpg.org",
+    :path => "/wiki/lib/exe/xmlrpc.php",
+    :use_ssl => true,
+    :wiki_url => "https://easy-rpg.org/wiki/"
   }
 
   # log to file
