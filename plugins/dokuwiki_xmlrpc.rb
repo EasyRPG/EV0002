@@ -37,7 +37,7 @@ class Cinch::DokuwikiXMLRPC
         unless res.length == 1
           message << "#{res.length.to_s} results, first is "
         end
-        message << url
+        message << "\"#{res[0]["title"]}\": " + url
       end
     else
       puts "Error: #{res.faultCode} #{res.faultString}"
