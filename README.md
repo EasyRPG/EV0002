@@ -90,3 +90,15 @@ Plugins
    monitored GitHub project. This uses the webserver provided by http_server.rb and
    relies on the GitHub api of course. Similiar plugins are names `octospy` for other
    bot frameworks.
+
+ * plugins/blog_webhooks.rb:
+
+   Uses webhooks to provide channel notifications, when someone adds a new blogpost/page
+   or someone adds a comment/replies to a comment  This uses the webserver provided by
+   http_server.rb and relies on the hookpress wordpress plugin or a hosted setup at
+   wordpress.com. Currently, it does not display full information, as the hooks are
+   limited to specific fields.
+
+ * plugins/server_info.rb:
+
+   Simple plugin that can execute predefined shell commands with optional grep filter.
