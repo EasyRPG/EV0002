@@ -98,7 +98,3 @@ Plugins
    http_server.rb and relies on the hookpress wordpress plugin or a hosted setup at
    wordpress.com. Currently, it does not display full information, as the hooks are
    limited to specific fields.
-
- * plugins/server_info.rb:
-
-   Simple plugin that can execute predefined shell commands with optional grep filter.
