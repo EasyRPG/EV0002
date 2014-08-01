@@ -130,6 +130,10 @@ class Cinch::GitHubWebhooks
       # pull request
 
       action = data["action"]
+
+      # we ignore labels and assignees
+      halt 204 if ['assigned', 'unassigned', 'labeled', 'unlabeled'].include? action
+
       if action == "synchronize"
         action = "updated"
       elsif action == "closed"
