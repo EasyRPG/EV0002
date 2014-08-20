@@ -31,9 +31,9 @@ references to `$secrets` and fill in the values directly.
 Running
 -------
 
-	$ bundle exec ./EV0002.rb
+    $ bundle exec ./EV0002.rb
 
-If you did not install the gems locally with bundler, you can leave out the `bundle exec`
+If you did not install the gems locally with bundler, you can leave out the `bundle exec`.
 
 LICENSE
 -------
