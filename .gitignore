@@ -11,4 +11,4 @@
 /.bundle
 
 # local gem folder
-/.gems
+/vendor
