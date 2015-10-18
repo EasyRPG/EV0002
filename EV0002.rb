@@ -25,9 +25,9 @@ bot = Cinch::Bot.new do
     c.port = 6697
     c.ssl.use = true
     c.ssl.verify = false
-    c.nicks = ["EV0001", "EV0002"]
+    c.nicks = Array.new(10) { |n| n = "EV%04d" % (n+1) }
     c.user = "EV0002"
-    c.realname = "EV0002 bot"
+    c.realname = "EV0002 bot - https://github.com/EasyRPG/EV0002"
     c.channels = ["#easyrpg"]
     c.plugins.prefix = /^:/
     c.plugins.plugins = [
