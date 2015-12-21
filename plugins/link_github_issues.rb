@@ -13,7 +13,7 @@ require "json"
 class Cinch::LinkGitHubIssues
   include Cinch::Plugin
 
-  match %r{([\w-]{3,}) ?#(\d{1,4})}, :use_prefix => false
+  match %r{([\w\-\.]{3,}) ?#(\d{1,4})}, :use_prefix => false
 
   def execute(msg, project, id)
     # do not reply to own messages
