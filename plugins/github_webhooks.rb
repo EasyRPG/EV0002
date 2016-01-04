@@ -73,9 +73,9 @@ class Cinch::GitHubWebhooks
       # comments on issues/pull requests
 
       if data["issue"]["state"] == "closed"
-        state = Format(:green, "[✔]")
+        state = "\x0303[✔]\x0F"
       else
-        state = Format(:red, "[✘]")
+        state = "\x0304[✘]\x0F"
       end
 
       template = "%s commented on %s %s#%i%s: \"%s\" - %s"

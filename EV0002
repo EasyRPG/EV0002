@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [ -d ".bundle" ]; then
-	echo "Starting EV0002 in bundler environment..."
-	exec bundle exec ./EV0002.rb
+  echo "Starting EV0002 in bundler environment..."
+  exec bundle exec ./EV0002.rb
 else
-	echo "Starting EV0002..."
-    exec ./EV0002.rb
+  echo "Starting EV0002..."
+  exec ./EV0002.rb
 fi
