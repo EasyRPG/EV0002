@@ -26,15 +26,27 @@ class Cinch::LinkGitHubIssues
     return if chosen.nil?
 
     # contruct url
-    url = sprintf("https://api.github.com/repos/EasyRPG/%s/issues/%i", project, id.to_i)
+    url = sprintf("https://api.github.com/repos/EasyRPG/%s/issues/%i", chosen, id.to_i)
 
     # get info and url of issue or pull request and send to irc
     res = JSON.parse(open(url).read)
     if res.has_key? 'number'
 
-      type = (res.has_key?('pull_request') ? "Pull request" : "Issue")
+      type = (res.has_key?('pull_request') ? "pull request" : "issue")
 
-      msg.reply("#{type} #{id.to_i}[#{res["state"]}]: \"#{res["title"]}\" - #{res["html_url"]}")
+      if res["state"] == "closed"
+        state = Format(:green, "[✔]")
+      else
+        state = Format(:red, "[✘]")
+      end
+
+      msg.reply(sprintf("%s %s#%i%s: \"%s\" - %s",
+                        type,
+                        chosen,
+                        id.to_i,
+                        state,
+                        res["title"],
+                        res["html_url"]))
     end
   end
 

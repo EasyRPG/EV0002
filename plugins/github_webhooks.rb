@@ -70,13 +70,21 @@ class Cinch::GitHubWebhooks
                         data["issue"]["html_url"])
 
     when "issue_comment"
-      # comments on issues
+      # comments on issues/pull requests
 
-      template = "%s commented on issue %i of %s: \"%s\" - %s"
+      if data["issue"]["state"] == "closed"
+        state = Format(:green, "[✔]")
+      else
+        state = Format(:red, "[✘]")
+      end
+
+      template = "%s commented on %s %s#%i%s: \"%s\" - %s"
       message = sprintf(template,
                         user,
-                        data["issue"]["number"],
+                        (data.has_key?('pull_request') ? "pull request" : "issue"),
                         repo,
+                        data["issue"]["number"],
+                        state,
                         data["issue"]["title"],
                         data["comment"]["html_url"])
 
