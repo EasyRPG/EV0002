@@ -81,17 +81,17 @@ class Cinch::GitHubWebhooks
       template = "%s commented on %s %s#%i%s: \"%s\" - %s"
       message = sprintf(template,
                         user,
-                        (data.has_key?('pull_request') ? "pull request" : "issue"),
+                        (data["issue"].has_key?('pull_request') ? "pull request" : "issue"),
                         repo,
                         data["issue"]["number"],
                         state,
                         data["issue"]["title"],
                         data["comment"]["html_url"])
 
-      # add up to 80 characters of the comment, sans all whitespace
+      # add up to 140 characters of the comment, sans all whitespace
       comment = data["comment"]["body"].gsub(/\s+/,' ').strip
-      message << "\n> " + comment[0, 80]
-      message << "…" if comment.length > 80
+      message << "\n> " + comment[0, 140]
+      message << "…" if comment.length > 140
 
     when "watch"
       # starring a repo means watching it
