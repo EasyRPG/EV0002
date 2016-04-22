@@ -72,6 +72,9 @@ class Cinch::GitHubWebhooks
     when "issue_comment"
       # comments on issues/pull requests
 
+      # we ignore edits and deletions
+      halt 204 unless data["action"] == "created"
+
       if data["issue"]["state"] == "closed"
         state = "\x0303[✔]\x0F"
       else
