@@ -2,10 +2,11 @@
 
 The channel bot in [#easyrpg][webchat] on freenode, provides logs, pizza and a lot of
 other stuff.
-It is using the [cinch][cinch] bot framework and is written in ruby, like the legacy
-EV0001.
 
-# Installation
+It is is written in ruby, using the [cinch][cinch] bot framework (our legacy
+[EV0001][ev0001] bot was written from scratch).
+
+## Installation
 
 Needed gems besides `cinch` are (see Gemfile for details):
 
@@ -26,20 +27,20 @@ Secret values (passwords and such) are read from a file `secrets.yml` on startup
 A template is provided, you need to copy it and fill in the values or remove all
 references to `$secrets` and fill in the values directly.
 
-# Running
+## Running
 
     $ ./EV0002
 
 This helper script tries to detect if you installed the gems locally with bundler and
 will run EV0002 in bundler environment if needed.
 
-# LICENSE
+## LICENSE
 
 This bot and plugins were written by carstene1ns and the EV0002 authors.
 They are licensed under the MIT license, see LICENSE file for details.
 There are a few exceptions to the license, see `Acknowledgements` sections for details.
 
-# Acknowledgements
+## Acknowledgements
 
 plugins/http_server.rb by [Quintus][quintus], under LGPL license - from
 https://github.com/Quintus/cinch-plugins
@@ -47,7 +48,7 @@ https://github.com/Quintus/cinch-plugins
 plugins/logplus.rb by [Quintus][quintus], under LGPL license - from
 https://github.com/Quintus/cinch-plugins
 
-# Plugins
+## Plugins
 
  * plugins/link_github_issues.rb:
 
@@ -95,6 +96,7 @@ https://github.com/Quintus/cinch-plugins
 
 [webchat]: https://webchat.freenode.net/?channels=easyrpg
 [cinch]: https://github.com/cinchrb/cinch
+[ev0001]: https://github.com/EasyRPG/EV0001
 [cinch-seen]: https://github.com/bhaberer/cinch-seen
 [cinch-identify]: https://github.com/cinchrb/cinch-identify
 [json]: http://flori.github.io/json/
