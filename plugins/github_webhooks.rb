@@ -57,8 +57,8 @@ class Cinch::GitHubWebhooks
 
       action = data["action"]
 
-      # we ignore labels and assignees
-      halt 204 if ['assigned', 'unassigned', 'labeled', 'unlabeled'].include? action
+      # we ignore edits, labels and assignees
+      halt 204 unless ['opened', 'closed', 'reopened'].include? action
 
       template = "%s %s issue %i of %s: \"%s\" - %s"
       message = sprintf(template,
@@ -142,8 +142,8 @@ class Cinch::GitHubWebhooks
 
       action = data["action"]
 
-      # we ignore labels and assignees
-      halt 204 if ['assigned', 'unassigned', 'labeled', 'unlabeled'].include? action
+      # we ignore edits, labels and assignees
+      halt 204 unless ['opened', 'closed', 'reopened', 'synchronize'].include? action
 
       if action == "synchronize"
         action = "updated"
@@ -166,6 +166,9 @@ class Cinch::GitHubWebhooks
 
     when "pull_request_review_comment"
       # comment on pull request
+
+      # we ignore edits and deletions
+      halt 204 unless data["action"] == "created"
 
       template = "%s commented on pull request %i of %s \"%s\": %s"
       message = sprintf(template,
