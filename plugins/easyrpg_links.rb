@@ -35,19 +35,19 @@ class Cinch::EasyRPGLinks
   end
 
   def link_web(msg)
-    msg.reply "https://easy-rpg.org/"
+    msg.reply "https://easyrpg.org/"
   end
 
   def link_blog(msg)
-    msg.reply "https://easy-rpg.org/blog/"
+    msg.reply "https://blog.easyrpg.org/"
   end
 
   def link_forums(msg)
-    msg.reply "https://easy-rpg.org/forums/"
+    msg.reply "https://community.easyrpg.org/"
   end
 
   def link_jenkins(msg)
-    msg.reply "https://easy-rpg.org/jenkins/"
+    msg.reply "https://ci.easyrpg.org/"
   end
 
   def link_twitter(msg)

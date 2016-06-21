@@ -87,10 +87,10 @@ bot = Cinch::Bot.new do
   config.plugins.options[Cinch::DokuwikiXMLRPC] = {
     :user => $secrets["dokuwiki"]["user"],
     :password => $secrets["dokuwiki"]["password"],
-    :host => "easy-rpg.org",
-    :path => "/wiki/lib/exe/xmlrpc.php",
+    :host => "wiki.easyrpg.org",
+    :path => "/lib/exe/xmlrpc.php",
     :use_ssl => true,
-    :wiki_url => "https://easy-rpg.org/wiki/"
+    :wiki_url => "https://wiki.easyrpg.org/"
   }
 
   # log to file
