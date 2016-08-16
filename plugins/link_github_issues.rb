@@ -5,8 +5,6 @@
 # available under MIT license
 #
 
-# needs json gem
-
 require "open-uri"
 require "json"
 
@@ -18,7 +16,6 @@ class Cinch::LinkGitHubIssues
   def execute(msg, project, id)
     # do not reply to own messages
     return if msg.user == bot
-    # TODO: do not reply to easyrpg-spambot messages
 
     # iterate over all projects to find the right
     chosen = config[:projects].detect { |p| p.downcase == project.downcase }

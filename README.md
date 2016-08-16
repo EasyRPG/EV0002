@@ -17,9 +17,9 @@ Needed gems besides `cinch` are (see Gemfile for details):
  * [sinatra][sinatra]
  * [chronic][chronic]
 
-You can use bundler to install the dependencies.
+You can use bundler to install them and their dependencies.
 
-    $ bundle install --path vendor/bundle [--shebang="ruby1.9"]
+    $ bundle install --path vendor/bundle [--shebang="ruby2.1"]
 
 If you provide the path argument, gems will be installed locally.
 
