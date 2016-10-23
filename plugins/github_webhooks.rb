@@ -178,10 +178,39 @@ class Cinch::GitHubWebhooks
                         data["pull_request"]["title"],
                         data["comment"]["html_url"])
 
-      # add up to 80 characters of the comment, sans all whitespace
+      # add up to 140 characters of the comment, sans all whitespace
       comment = data["comment"]["body"].gsub(/\s+/,' ').strip
-      message << "\n> " + comment[0, 80]
-      message << "…" if comment.length > 80
+      message << "\n> " + comment[0, 140]
+      message << "…" if comment.length > 140
+
+    when "pull_request_review"
+      # review (can be with comment)
+
+      # we ignore other actions
+      halt 204 unless data["action"] == "submitted"
+
+      if data["review"]["state"] == "approved"
+        state = "\x0303approved\x0F"
+      elsif data["review"]["state"] == "commented"
+        state = "reviewed"
+      else
+        state = "\x0304requested changes\x0F"
+      end
+
+      template = "%s %s%s pull request %i of %s \"%s\": %s"
+      message = sprintf(template,
+                        user,
+                        state,
+                        (data["review"]["state"] == "changes_requested" ? " in" : ""),
+                        data["pull_request"]["number"],
+                        repo,
+                        data["pull_request"]["title"],
+                        data["review"]["html_url"])
+
+      # add up to 140 characters of the comment, sans all whitespace
+      comment = data["review"]["body"].gsub(/\s+/,' ').strip
+      message << "\n> " + comment[0, 140] if comment.length > 0
+      message << "…" if comment.length > 140
 
     when "commit_comment"
       # comment on commit
