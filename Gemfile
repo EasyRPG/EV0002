@@ -7,3 +7,4 @@ gem "json"
 gem "thin"
 gem "sinatra"
 gem "chronic"
+gem 'xmlrpc' if RUBY_VERSION >= '2.4.0'

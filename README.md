@@ -16,6 +16,7 @@ Needed gems besides `cinch` are (see Gemfile for details):
  * [thin][thin]
  * [sinatra][sinatra]
  * [chronic][chronic]
+ * [xmlrpc][xmlrpc] (for ruby 2.4+)
 
 You can use bundler to install them and their dependencies.
 
@@ -103,4 +104,5 @@ https://github.com/Quintus/cinch-plugins
 [thin]: http://code.macournoyer.com/thin/
 [sinatra]: http://sinatrarb.com/
 [chronic]: https://github.com/mojombo/chronic
+[xmlrpc]: https://github.com/ruby/xmlrpc
 [quintus]: https://github.com/Quintus
