@@ -31,14 +31,19 @@ class Cinch::GitHubWebhooks
     # get event type from http header
     event = request.env["HTTP_X_GITHUB_EVENT"]
 
-    # we ignore some events
-    halt 204 if [
+    # we ignore some events (TODO: use whitelist instead of blacklist)
+    halt 202 if [
                   'ping',               # test, when enabling webhook
                   'gollum',             # wiki changes
                   'deployment',         # ?
                   'deployment_status',  # ?
+                  'label',              # repository labels
                   'member',             # collaborator added
+                  'milestone',          # repository milestones
                   'page_build',         # github pages built
+                  'project',            # projects
+                  'project_card',       #
+                  'project_column',     #
                   'public',             # repository visibility
                   'status',             # internal git commit events
                   'team_add'            # user added to team
@@ -57,8 +62,8 @@ class Cinch::GitHubWebhooks
 
       action = data["action"]
 
-      # we ignore edits, labels and assignees
-      halt 204 unless ['opened', 'closed', 'reopened'].include? action
+      # we ignore edits, labels, milestones and assignees
+      halt 202 unless ['opened', 'closed', 'reopened'].include? action
 
       template = "%s %s issue %i of %s: \"%s\" - %s"
       message = sprintf(template,
@@ -73,7 +78,7 @@ class Cinch::GitHubWebhooks
       # comments on issues/pull requests
 
       # we ignore edits and deletions
-      halt 204 unless data["action"] == "created"
+      halt 202 unless data["action"] == "created"
 
       if data["issue"]["state"] == "closed"
         state = "\x0303[✔]\x0F"
@@ -99,6 +104,9 @@ class Cinch::GitHubWebhooks
     when "watch"
       # starring a repo means watching it
 
+      # we ignore possible other actions (that may be added in the future)
+      halt 202 unless data["action"] == "started"
+
       template = "%s starred %s: %s"
       message = sprintf(template,
                         user,
@@ -108,10 +116,10 @@ class Cinch::GitHubWebhooks
     when "push"
       # git commits
 
-      # TODO: figure out, why this is not in the hash, as api only returns 20 commits max.
+      # Commit count is not in the hash, api only returns 20 commits max.
       if data["commits"].count == 0
         # abort when an empty commit is pushed (for example deleting a branch)
-        halt 204
+        halt 202
       elsif data["commits"].count == 1
         counter_s = "1 commit"
       elsif data["commits"].count < 20
@@ -131,7 +139,7 @@ class Cinch::GitHubWebhooks
     when "fork"
       # new fork
 
-      template = "%s forked %s: %s"
+      template = "%s forked %s to %s"
       message = sprintf(template,
                         user,
                         repo,
@@ -142,8 +150,8 @@ class Cinch::GitHubWebhooks
 
       action = data["action"]
 
-      # we ignore edits, labels and assignees
-      halt 204 unless ['opened', 'closed', 'reopened', 'synchronize'].include? action
+      # we ignore edits, labels, review requests and assignees
+      halt 202 unless ['opened', 'closed', 'reopened', 'synchronize'].include? action
 
       if action == "synchronize"
         action = "updated"
@@ -168,7 +176,7 @@ class Cinch::GitHubWebhooks
       # comment on pull request
 
       # we ignore edits and deletions
-      halt 204 unless data["action"] == "created"
+      halt 202 unless data["action"] == "created"
 
       template = "%s commented on pull request %i of %s \"%s\": %s"
       message = sprintf(template,
@@ -186,8 +194,8 @@ class Cinch::GitHubWebhooks
     when "pull_request_review"
       # review (can be with comment)
 
-      # we ignore other actions
-      halt 204 unless data["action"] == "submitted"
+      # we ignore possible other actions (that may be added in the future)
+      halt 202 unless data["action"] == "submitted"
 
       if data["review"]["state"] == "approved"
         state = "\x0303approved\x0F"
@@ -214,6 +222,9 @@ class Cinch::GitHubWebhooks
 
     when "commit_comment"
       # comment on commit
+
+      # we ignore possible other actions (that may be added in the future)
+      halt 202 unless data["action"] == "created"
 
       template = "%s commented on a commit of %s: %s"
       message = sprintf(template,
@@ -249,6 +260,9 @@ class Cinch::GitHubWebhooks
     when "release"
       # created release
 
+      # we ignore possible other actions (that may be added in the future)
+      halt 202 unless data["action"] == "published"
+
       unless data["release"]["name"].nil?
         release = "release \"#{data["release"]["name"]}\""
       else
@@ -264,8 +278,7 @@ class Cinch::GitHubWebhooks
 
     else
       # something we do not know, yet
-
-      message = "Unknown #{event} event for #{repo} repository, dumped JSON: #{data.inspect[0, 300]}..."
+      message = "Unknown '#{event}' event for #{repo} repository! :[]"
 
     end
 
