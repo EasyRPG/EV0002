@@ -5,7 +5,7 @@
 # available under MIT license
 #
 
-require "open-uri"
+require "http"
 require "json"
 
 class Cinch::LinkGitHubIssues
@@ -20,31 +20,37 @@ class Cinch::LinkGitHubIssues
     # iterate over all projects to find the right
     chosen = config[:projects].detect { |p| p.downcase == project.downcase }
     # not found, ignore
-    return if chosen.nil?
+    if chosen.nil?
+      debug "Project not found: " + project
+      return
+    end
 
-    # contruct url
-    url = sprintf("https://api.github.com/repos/EasyRPG/%s/issues/%i", chosen, id.to_i)
+    # contruct and open url
+    response = HTTP.get("https://api.github.com/repos/EasyRPG/" + chosen + "/issues/" + id)
 
-    # get info and url of issue or pull request and send to irc
-    res = JSON.parse(open(url).read)
-    if res.has_key? 'number'
+    if response.code == 200
+      issue = JSON.parse(response.to_s)
 
-      type = (res.has_key?('pull_request') ? "pull request" : "issue")
+      if issue.has_key? 'number'
+        # get info and url of issue or pull request and send to irc
+        type = (issue.has_key?('pull_request') ? "pull request" : "issue")
 
-      if res["state"] == "closed"
-        state = Format(:green, "[✔]")
-      else
-        state = Format(:red, "[✘]")
+        if issue["state"] == "closed"
+          state = Format(:green, "[✔]")
+        else
+          state = Format(:red, "[✘]")
+        end
+
+        msg.reply(sprintf("%s %s#%i%s: \"%s\" - %s",
+                          type,
+                          chosen,
+                          id.to_i,
+                          state,
+                          issue["title"],
+                          issue["html_url"]))
       end
-
-      msg.reply(sprintf("%s %s#%i%s: \"%s\" - %s",
-                        type,
-                        chosen,
-                        id.to_i,
-                        state,
-                        res["title"],
-                        res["html_url"]))
+    else
+      info "Error getting GitHub issue: " + response.to_s
     end
   end
-
 end
