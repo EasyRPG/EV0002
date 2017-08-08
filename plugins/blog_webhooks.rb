@@ -1,11 +1,11 @@
 #
 # This cinch plugin is part of EV0002
 #
-# written by carstene1ns <dev @ f4ke . de> 2014
-# available under MIT license
+# written by carstene1ns <dev @ f4ke . de> 2014-2017
+# available under ISC license
 #
 
-# needs json gem, maybe later rubypress gem
+# maybe needs rubypress gem later
 require "json"
 
 class Cinch::BlogWebhooks

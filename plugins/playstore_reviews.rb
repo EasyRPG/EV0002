@@ -2,7 +2,7 @@
 # This cinch plugin is part of EV0002
 #
 # written by carstene1ns <dev @ f4ke . de> 2017
-# available under MIT license
+# available under ISC license
 #
 
 require "googleauth"

@@ -40,7 +40,7 @@ will run EV0002 in bundler environment if needed.
 ## LICENSE
 
 This bot and plugins were written by carstene1ns and the EV0002 authors.
-They are licensed under the MIT license, see LICENSE file for details.
+They are licensed under the ISC license, see LICENSE file for details.
 There are a few exceptions to the license, see `Acknowledgements` sections for details.
 
 ## Acknowledgements
