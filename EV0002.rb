@@ -97,8 +97,7 @@ bot = Cinch::Bot.new do
 
   config.plugins.options[Cinch::PlayStoreReviews] = {
     :app => "org.easyrpg.player",
-    :json_key => PWD + "/" + $secrets["playstore"]["jsonfile"],
-    :channel => config.channels[0]
+    :json_key => PWD + "/" + $secrets["playstore"]["jsonfile"]
   }
 
   # log to file

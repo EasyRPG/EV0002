@@ -5,9 +5,9 @@
 # available under MIT license
 #
 
-require 'googleauth'
-require 'http'
-require 'json'
+require "googleauth"
+require "http"
+require "json"
 
 class Cinch::PlayStoreReviews
   include Cinch::Plugin
@@ -18,17 +18,18 @@ class Cinch::PlayStoreReviews
   def get_reviews
     app = config[:app]
     json_key = config[:json_key]
-    channel = config[:channel]
 
     # not found, ignore
-    return if app.nil? or json_key.nil? or channel.nil?
+    return if app.nil? or json_key.nil?
 
     authorizer = Google::Auth::ServiceAccountCredentials.make_creds(
       json_key_io: File.open(json_key),
       scope: 'https://www.googleapis.com/auth/androidpublisher')
 
+    # token is valid for an hour
     authorizer.fetch_access_token!
 
+    # rate limit is 60 per hour
     response = HTTP.get(
       "https://www.googleapis.com/androidpublisher/v2/applications/" + app + "/reviews",
       :params => {
@@ -52,20 +53,19 @@ class Cinch::PlayStoreReviews
         review.gsub!(/[[:space:]]+/, " ")
         review.strip!
 
-        # last hour
+        # only show last hour
         if Time.at(time.to_i) > Time.now() - (60 * 60)
-          txt = "[PlayStore] New #{stars}* rating"
-          txt += " by #{author}" unless author.empty?
-          txt += ": " + title unless title.empty?
-          txt += " (translated)" if translated
-          txt += "\n> "
-          if review.length > 120
-            txt += review[0..119] + "…"
-          else
-            txt += review
-          end
+          # some parts are optional
+          message = "New #{stars}* rating"
+          message << " by #{author}" unless author.empty?
+          message << ": " + title unless title.empty?
+          message << " (translated)" if translated
 
-          Channel(channel).send(txt)
+          # add up to 140 characters of the review
+          message << "\n> " + review[0, 140]
+          message << "…" if review.length > 140
+
+          bot.channels[0].send("[PlayStore] #{message}")
         end
       }
     else

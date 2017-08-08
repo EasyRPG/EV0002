@@ -16,6 +16,8 @@ Needed gems besides `cinch` are (see Gemfile for details):
  * [thin][thin]
  * [sinatra][sinatra]
  * [chronic][chronic]
+ * [http][http]
+ * [googleauth][googleauth]
  * [xmlrpc][xmlrpc] (for ruby 2.4+)
 
 You can use bundler to install them and their dependencies.
@@ -95,6 +97,11 @@ https://github.com/Quintus/cinch-plugins
    wordpress.com. Currently, it does not display full information, as the hooks are
    limited to specific fields.
 
+ * plugins/playstore_reviews.rb:
+
+   Uses the Google PlayStore API (pulled with a timer) to provide channel notifications,
+   when someone adds a new review or updates an old review for our Android app.
+
 [webchat]: https://webchat.freenode.net/?channels=easyrpg
 [cinch]: https://github.com/cinchrb/cinch
 [ev0001]: https://github.com/EasyRPG/EV0001
@@ -104,5 +111,7 @@ https://github.com/Quintus/cinch-plugins
 [thin]: http://code.macournoyer.com/thin/
 [sinatra]: http://sinatrarb.com/
 [chronic]: https://github.com/mojombo/chronic
+[http]: https://github.com/httprb/http
+[googleauth]: https://github.com/google/google-auth-library-ruby
 [xmlrpc]: https://github.com/ruby/xmlrpc
 [quintus]: https://github.com/Quintus
