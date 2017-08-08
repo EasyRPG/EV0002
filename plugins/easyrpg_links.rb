@@ -13,9 +13,10 @@ class Cinch::EasyRPGLinks
   match "web", method: :link_web
   match "blog", method: :link_blog
   match "forums", method: :link_forums
+  match "community", method: :link_forums
   match "jenkins", method: :link_jenkins
+  match "ci", method: :link_jenkins
   match "twitter", method: :link_twitter
-  match "identica", method: :link_identica
   match "paste", method: :link_paste
 
   def execute(msg, project)
@@ -52,10 +53,6 @@ class Cinch::EasyRPGLinks
 
   def link_twitter(msg)
     msg.reply "https://twitter.com/easyrpg/"
-  end
-
-  def link_identica(msg)
-    msg.reply "https://identi.ca/easyrpg/"
   end
 
   def link_paste(msg)
