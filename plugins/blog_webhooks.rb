@@ -62,7 +62,8 @@ class Cinch::BlogWebhooks
       message = sprintf(template, action, type, title, url)
 
     else
-      message = "unknown request, dumped data: #{params.inspect[0, 300]}…"
+      info "Error: unknown request, dumped data: #{params.inspect[0, 300]}…"
+      204
     end
 
     # output

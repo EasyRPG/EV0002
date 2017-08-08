@@ -277,8 +277,8 @@ class Cinch::GitHubWebhooks
 
     else
       # something we do not know, yet
-      message = "Unknown '#{event}' event for #{repo} repository! :[]"
-
+      info "Error: Unknown '#{event}' event for #{repo} repository! :[]"
+      204
     end
 
     # output
