@@ -8,8 +8,9 @@
 class Cinch::AsciiFood
   include Cinch::Plugin
 
-  match "drink", method: :beer
-  match "pizza"
+  match "drink",  method: :beer
+  match "pizza",  method: :pizza
+  match "coffee", method: :coffee
 
   def beer(msg)
     beer = <<-eob
@@ -22,7 +23,7 @@ class Cinch::AsciiFood
     msg.reply "#{beer}"
   end
 
-  def execute(msg)
+  def pizza(msg)
     pizza = <<-eop
     //"""--.._
    ||  (_)  _ "-._      PPPPP IIII ZZZZZ ZZZZZ    A
@@ -33,4 +34,14 @@ class Cinch::AsciiFood
     msg.reply "#{pizza}"
   end
 
+  def coffee(msg)
+    coffee = <<-eoc
+        ;)( ;
+       :----:
+      C|====|
+       |    |
+       `----'
+    eoc
+    msg.reply "#{coffee}"
+  end
 end
