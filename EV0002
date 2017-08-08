@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ -d ".bundle" ]; then
   echo "Starting EV0002 in bundler environment..."
