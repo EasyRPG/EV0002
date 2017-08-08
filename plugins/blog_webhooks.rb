@@ -39,9 +39,9 @@ class Cinch::BlogWebhooks
       template = "%s %s post %i:"
       message = sprintf(template, author, action, post_id)
 
-      # add up to 80 characters of the comment, sans all whitespace
-      message << "\n> " + comment[0, 80]
-      message << "…" if comment.length > 80
+      # add up to 200 characters of the comment, sans all whitespace
+      message << "\n> " + comment[0, 200]
+      message << "…" if comment.length > 200
 
     # new page or blog entry
     elsif ["publish_post", "publish_page"].include? params[:hook]

@@ -61,9 +61,9 @@ class Cinch::PlayStoreReviews
           message << ": " + title unless title.empty?
           message << " (translated)" if translated
 
-          # add up to 140 characters of the review
-          message << "\n> " + review[0, 140]
-          message << "…" if review.length > 140
+          # add up to 200 characters of the review
+          message << "\n> " + review[0, 200]
+          message << "…" if review.length > 200
 
           bot.channels[0].send("[PlayStore] #{message}")
         end

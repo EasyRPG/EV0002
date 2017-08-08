@@ -95,10 +95,10 @@ class Cinch::GitHubWebhooks
                         data["issue"]["title"],
                         data["comment"]["html_url"])
 
-      # add up to 140 characters of the comment, sans all whitespace
+      # add up to 200 characters of the comment, sans all whitespace
       comment = data["comment"]["body"].gsub(/\s+/,' ').strip
-      message << "\n> " + comment[0, 140]
-      message << "…" if comment.length > 140
+      message << "\n> " + comment[0, 200]
+      message << "…" if comment.length > 200
 
     when "watch"
       # starring a repo means watching it
@@ -185,10 +185,10 @@ class Cinch::GitHubWebhooks
                         data["pull_request"]["title"],
                         data["comment"]["html_url"])
 
-      # add up to 140 characters of the comment, sans all whitespace
+      # add up to 200 characters of the comment, sans all whitespace
       comment = data["comment"]["body"].gsub(/\s+/,' ').strip
-      message << "\n> " + comment[0, 140]
-      message << "…" if comment.length > 140
+      message << "\n> " + comment[0, 200]
+      message << "…" if comment.length > 200
 
     when "pull_request_review"
       # review (can be with comment)
@@ -214,10 +214,10 @@ class Cinch::GitHubWebhooks
                         data["pull_request"]["title"],
                         data["review"]["html_url"])
 
-      # add up to 140 characters of the comment, sans all whitespace
+      # add up to 200 characters of the comment, sans all whitespace
       comment = data["review"]["body"].gsub(/\s+/,' ').strip
-      message << "\n> " + comment[0, 140] if comment.length > 0
-      message << "…" if comment.length > 140
+      message << "\n> " + comment[0, 200] if comment.length > 0
+      message << "…" if comment.length > 200
 
     when "commit_comment"
       # comment on commit
@@ -231,10 +231,10 @@ class Cinch::GitHubWebhooks
                         repo,
                         data["comment"]["html_url"])
 
-      # add up to 80 characters of the comment, sans all whitespace
+      # add up to 200 characters of the comment, sans all whitespace
       comment = data["comment"]["body"].gsub(/\s+/,' ').strip
-      message << "\n> " + comment[0, 80]
-      message << "…" if comment.length > 80
+      message << "\n> " + comment[0, 200]
+      message << "…" if comment.length > 200
 
     when "create"
       # add branch or tag
