@@ -72,7 +72,7 @@ bot = Cinch::Bot.new do
   }
 
   config.plugins.options[Cinch::HttpServer] = {
-    :host => "0.0.0.0",
+    :host => "127.0.0.1",
     :port => 2310,
     :logfile => "#{PWD}/data/webhooks.log"
   }
