@@ -102,7 +102,7 @@ https://github.com/Quintus/cinch-plugins
    Uses the Google PlayStore API (pulled with a timer) to provide channel notifications,
    when someone adds a new review or updates an old review for our Android app.
 
-[webchat]: https://webchat.freenode.net/?channels=easyrpg
+[webchat]: https://kiwiirc.com/nextclient/#ircs://irc.freenode.net/#easyrpg?nick=rpgguest??
 [cinch]: https://github.com/cinchrb/cinch
 [ev0001]: https://github.com/EasyRPG/EV0001
 [cinch-seen]: https://github.com/bhaberer/cinch-seen
