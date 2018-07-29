@@ -14,6 +14,7 @@ require_relative "plugins/logplus"
 require_relative "plugins/dokuwiki_xmlrpc"
 require_relative "plugins/blog_webhooks"
 require_relative "plugins/playstore_reviews"
+require_relative "plugins/twitter_webhooks"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -43,6 +44,7 @@ bot = Cinch::Bot.new do
                           Cinch::DokuwikiXMLRPC,
                           Cinch::BlogWebhooks,
                           Cinch::PlayStoreReviews,
+                          Cinch::TwitterWebhooks,
                         ]
   end
 
@@ -98,6 +100,10 @@ bot = Cinch::Bot.new do
   config.plugins.options[Cinch::PlayStoreReviews] = {
     :app => "org.easyrpg.player",
     :json_key => PWD + "/" + $secrets["playstore"]["jsonfile"]
+  }
+
+  config.plugins.options[Cinch::TwitterWebhooks] = {
+    :secret => $secrets["twitter_hooks"]["secret"]
   }
 
   # log to file

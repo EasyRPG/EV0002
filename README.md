@@ -102,6 +102,12 @@ https://github.com/Quintus/cinch-plugins
    Uses the Google PlayStore API (pulled with a timer) to provide channel notifications,
    when someone adds a new review or updates an old review for our Android app.
 
+ * plugins/twitter_webhooks.rb:
+
+   Uses Zapier webhooks to provide channel notifications, when something project related
+   happens on Twitter. This uses the webserver provided by http_server.rb and
+   relies on the Zapier service and Twitter api.
+
 [webchat]: https://kiwiirc.com/nextclient/#ircs://irc.freenode.net/#easyrpg?nick=rpgguest??
 [cinch]: https://github.com/cinchrb/cinch
 [ev0001]: https://github.com/EasyRPG/EV0001
