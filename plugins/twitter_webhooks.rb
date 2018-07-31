@@ -43,8 +43,31 @@ class Cinch::TwitterWebhooks
 
     when "mention"
 
-      template = "New tweet by %s (https://twitter.com/%s/status/%s):"
+      # FIXME: all fields sent by zapier are strings
+
+      # ignore normal retweets
+      retweet = data["retweet_count"]
+      halt 202 if retweet != "0"
+
+      type = "tweet"
+
+      # retweet with added message
+      type = "quoted tweet" if data["is_quote"] == "True"
+
+      if data.has_key?('in_reply_to')
+
+        type = "tweet in conversation"
+
+        # replied to us?
+        if data["in_reply_to"] == bot.config.plugins.options[Cinch::TwitterWebhooks][:user]
+          type = "reply"
+        end
+
+      end
+
+      template = "New %s by %s (https://twitter.com/%s/status/%s):"
       message = sprintf(template,
+                        type,
                         data["name"],
                         user,
                         data["id"])

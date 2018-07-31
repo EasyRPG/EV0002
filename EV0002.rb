@@ -103,6 +103,7 @@ bot = Cinch::Bot.new do
   }
 
   config.plugins.options[Cinch::TwitterWebhooks] = {
+    :user => "EasyRPG",
     :secret => $secrets["twitter_hooks"]["secret"]
   }
 
