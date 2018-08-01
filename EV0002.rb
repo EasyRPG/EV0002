@@ -5,6 +5,7 @@ require 'cinch-seen'
 require 'cinch/plugins/identify'
 require 'yaml'
 
+require_relative "plugins/autovoice"
 require_relative "plugins/asciifood"
 require_relative "plugins/easyrpg_links"
 require_relative "plugins/link_github_issues"
@@ -33,6 +34,7 @@ bot = Cinch::Bot.new do
     c.channels = ["#easyrpg"]
     c.plugins.prefix = /^:/
     c.plugins.plugins = [
+                          Cinch::AutoVoice,
                           Cinch::AsciiFood,
                           Cinch::EasyRPGLinks,
                           Cinch::LinkGitHubIssues,
