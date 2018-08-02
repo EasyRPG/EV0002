@@ -17,7 +17,8 @@ class Cinch::AutoVoice
     # ignore myself
     return if m.user.nick == bot.nick
 
-    # these are friends, not food:
+    # do nothing, if not capable
+    return if !(m.channel.opped?(bot) || m.channel.half_opped?(bot))
 
     # matrix.org bridged users
     autovoice = true if m.user.match("*!*@gateway/shell/matrix.org/x-*")
@@ -28,19 +29,26 @@ class Cinch::AutoVoice
     # freenode webchat users (reCAPTCHA approved)
     autovoice = true if m.user.match("*!*@gateway/web/freenode/ip.*")
 
-    # identified users (nickserv)
+    # identified users (nickserv), same like +M channel flag
     autovoice = true if m.user.authed?
 
-    # directly voice them
+    # these are friends, not food, so directly voice them
     if autovoice
       m.channel.voice(m.user)
       return
     end
 
-    # all others need to wait some seconds until they can talk…
-    wait = 8
-    # …, but giving ssl/tls users the benefit of the doubt
-    wait = 4 if m.user.secure
+    # channel is moderated (ongoing spam attack), notify user
+    if m.channel.moderated?
+      message = "We are currently experiencing a lot of spam messages by bots, "
+      message << "so we will have you wait a few seconds until you can talk. "
+      message << "Please bear with us!"
+      m.user.notice(message)
+    end
+
+    wait = 15
+    # give ssl/tls users the benefit of the doubt
+    wait = 5 if m.user.secure
 
     Timer(wait, { :shots => 1 }) { m.channel.voice(m.user) }
 
