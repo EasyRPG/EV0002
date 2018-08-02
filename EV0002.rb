@@ -16,6 +16,7 @@ require_relative "plugins/dokuwiki_xmlrpc"
 require_relative "plugins/blog_webhooks"
 require_relative "plugins/playstore_reviews"
 require_relative "plugins/twitter_webhooks"
+require_relative "plugins/discourse_webhooks"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -47,6 +48,7 @@ bot = Cinch::Bot.new do
                           Cinch::BlogWebhooks,
                           Cinch::PlayStoreReviews,
                           Cinch::TwitterWebhooks,
+                          Cinch::DiscourseWebhooks
                         ]
   end
 
@@ -107,6 +109,11 @@ bot = Cinch::Bot.new do
   config.plugins.options[Cinch::TwitterWebhooks] = {
     :user => "EasyRPG",
     :secret => $secrets["twitter_hooks"]["secret"]
+  }
+
+  config.plugins.options[Cinch::DiscourseWebhooks] = {
+    :url => "https://community.easyrpg.org",
+    :secret => $secrets["discourse_hooks"]["secret"]
   }
 
   # log to file
