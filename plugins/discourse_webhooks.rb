@@ -30,34 +30,50 @@ class Cinch::DiscourseWebhooks
     # get event type
     event = request.env['HTTP_X_DISCOURSE_EVENT']
 
+    # we ignore some events
+    halt 202 if [ 'topic_edited', "topic_pinned_status_updated" ].include? event
+
     # handle event
     case event
     when "ping"
 
       message = "Pong!"
 
-    when "post_created"
-      # return if we got no valid post data
-      post = data["post"]
-      halt 400 if post.nil?
+    when "topic_created", "topic_destroyed", "topic_closed_status_updated",
+         "topic_visible_status_updated", "topic_archived_status_updated"
 
-      template = 'New %s "%s" by %s (%s/t/%s)'
+      # return if we got no valid topic data
+      topic = data["topic"]
+      halt 400 if topic.nil?
+
+      # ignore private messages
+      halt 204 if topic["archetype"] == "private_message"
+
+      if event == "topic_created"
+        action = "created"
+        user = topic["created_by"]["username"]
+      elsif event == "topic_destroyed"
+        action = "deleted"
+        user = topic["deleted_by"]["username"]
+      else
+        user = topic["last_poster"]["username"]
+        if event == "topic_visible_status_updated"
+          action = topic["visible"] ? "exposed" : "hid"
+        elsif event == "topic_archived_status_updated"
+          action = topic["archived"] ? "archived" : "unarchived"
+        else
+          action = topic["closed"] ? "closed" : "reopened"
+        end
+      end
+
+      template = '%s %s topic "%s" (%s/t/%s)'
       message = sprintf(template,
-                        post["topic_posts_count"] == 1 ? "Topic" : "Post in",
-                        post["topic_title"],
-                        post["display_username"].empty? ? post["username"] : post["display_username"],
+                        user,
+                        action,
+                        topic["title"],
                         bot.config.plugins.options[Cinch::DiscourseWebhooks][:url],
-                        post["topic_id"])
+                        topic["id"])
 
-      # add up to 200 characters of the message, sans all whitespace and html tags
-      topic_post = post["cooked"].gsub(/\s+/,' ').gsub(/<.*?>/, '').strip
-      message << "\n> " + topic_post[0, 200]
-      message << "…" if topic_post.length > 200
-
-    when "post_edited"
-    when "post_destroyed"
-      # ignore non relevant events
-      halt 204
     else
       # something we do not know, yet
       info "Error: Unknown Discourse event '#{event}'! :[]"
