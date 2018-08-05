@@ -200,6 +200,11 @@ class Cinch::LogPlus
 
   # Target for all public channel messages/actions not issued by the bot.
   def log_public_message(msg)
+    # When moderated don't log messages by users that don't have any +v or
+    # higher mode. Allows usage of channel mode +z without spam being logged.
+    return if msg.channel.moderated? and not (msg.channel.opped?(msg.user) or
+      msg.channel.half_opped?(msg.user) or msg.channel.voiced?(msg.user))
+
     @filemutex.synchronize do
       if msg.action?
         # Logs the given action to the HTML logfile Does NOT
