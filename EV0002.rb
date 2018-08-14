@@ -2,7 +2,6 @@
 
 require 'cinch'
 require 'cinch-seen'
-require 'cinch/plugins/identify'
 require 'yaml'
 
 require_relative "plugins/autovoice"
@@ -32,6 +31,8 @@ bot = Cinch::Bot.new do
     c.nicks = Array.new(10) { |n| n = "EV%04d" % (n+1) }
     c.user = "EV0002"
     c.realname = "EV0002 bot - https://github.com/EasyRPG/EV0002"
+    c.sasl.username = $secrets["nickserv"]["username"]
+    c.sasl.password = $secrets["nickserv"]["password"]
     c.channels = ["#easyrpg"]
     c.plugins.prefix = /^:/
     c.plugins.plugins = [
@@ -40,7 +41,6 @@ bot = Cinch::Bot.new do
                           Cinch::EasyRPGLinks,
                           Cinch::LinkGitHubIssues,
                           Cinch::Plugins::Seen,
-                          Cinch::Plugins::Identify,
                           Cinch::HttpServer,
                           Cinch::GitHubWebhooks,
                           Cinch::LogPlus,
@@ -69,12 +69,6 @@ bot = Cinch::Bot.new do
 
   config.plugins.options[Cinch::Plugins::Seen] = {
     filename: "#{PWD}/data/seen.yml"
-  }
-
-  config.plugins.options[Cinch::Plugins::Identify] = {
-    :username => $secrets["nickserv"]["username"],
-    :password => $secrets["nickserv"]["password"],
-    :type     => :nickserv,
   }
 
   config.plugins.options[Cinch::HttpServer] = {

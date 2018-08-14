@@ -11,7 +11,6 @@ It is is written in ruby, using the [cinch][cinch] bot framework (our legacy
 Needed gems besides `cinch` are (see Gemfile for details):
 
  * [cinch-seen][cinch-seen]
- * [cinch-identify][cinch-identify]
  * [json][json]
  * [thin][thin]
  * [sinatra][sinatra]
@@ -19,6 +18,10 @@ Needed gems besides `cinch` are (see Gemfile for details):
  * [http][http]
  * [googleauth][googleauth]
  * [xmlrpc][xmlrpc] (for ruby 2.4+)
+
+Deprecated/Optional gems:
+
+ * [cinch-identify][cinch-identify], SASL is preferred now.
 
 You can use bundler to install them and their dependencies.
 
