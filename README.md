@@ -64,7 +64,7 @@ https://github.com/Quintus/cinch-plugins
 
  * plugins/logplus.rb:
 
-   Heavily modified version of Quintus' plugin, see above. Generates HTML logs and links a
+   Modified version of Quintus' plugin, see above. Generates HTML logs and links a
    corresponding log file, when a user uses the `log` command with a human readable time
    specification, e.g. `log monday last week`.
 

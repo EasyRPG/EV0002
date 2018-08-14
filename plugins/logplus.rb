@@ -80,7 +80,10 @@ class Cinch::LogPlus
   listen_to :channel,    :method => :log_public_message
   listen_to :topic,      :method => :log_topic
   listen_to :join,       :method => :log_join
-  listen_to :leaving,    :method => :log_leaving
+  listen_to :part,       :method => :log_leaving
+  listen_to :quit,       :method => :log_leaving
+  listen_to :kick,       :method => :log_moderation
+  listen_to :kill,       :method => :log_moderation
   listen_to :nick,       :method => :log_nick
   listen_to :mode_change,:method => :log_modechange
   timer 60,              :method => :check_midnight
@@ -318,6 +321,26 @@ class Cinch::LogPlus
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">&lt;--</td>
           <td class="msgleave"><span class="actionnick">#{determine_status(msg)}#{leaving_user.name}</span>&nbsp;#{text}.</td>
+        </tr>
+      HTML
+    end
+  end
+
+  def log_moderation(msg)
+    @filemutex.synchronize do
+      target = User(msg.params[1])
+
+      if msg.channel?
+        action = "kicked"
+      else
+        action = "killed"
+      end
+
+      @htmllogfile.write(<<-HTML)
+        <tr id="#{timestamp_anchor(msg.time)}">
+          <td class="msgtime">#{timestamp_link(msg.time)}</td>
+          <td class="msgnick">&lt;--</td>
+          <td class="msgleave"><span class="actionnick">#{target.name}</span>&nbsp;has been #{action} by #{determine_status(msg)}#{msg.user.name} (#{CGI.escape_html(msg.message)}).</td>
         </tr>
       HTML
     end
