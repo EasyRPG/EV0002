@@ -9,6 +9,7 @@ class Cinch::AutoVoice
   include Cinch::Plugin
 
   listen_to :join
+  match /moderation (on|off)$/
 
   def listen(m)
 
@@ -17,8 +18,8 @@ class Cinch::AutoVoice
     # ignore myself
     return if m.user.nick == bot.nick
 
-    # do nothing, if not capable
-    return if !(m.channel.opped?(bot) || m.channel.half_opped?(bot))
+    # do nothing, if not necessary or not capable
+    return if !@moderation || !(m.channel.opped?(bot) || m.channel.half_opped?(bot))
 
     # matrix.org bridged users
     autovoice = true if m.user.match("*!*@gateway/shell/matrix.org/x-*")
@@ -40,17 +41,55 @@ class Cinch::AutoVoice
 
     # channel is moderated (ongoing spam attack), notify user
     if m.channel.moderated?
-      message = "We are currently experiencing a lot of spam messages by bots, "
-      message << "so we will have you wait a few seconds until you can talk. "
-      message << "Please bear with us!"
+      message = "We are currently under attack by spambots, please register your "
+      message << "nick or use our webchat client: https://easyrpg.org/contact/irc/"
       m.user.notice(message)
     end
 
-    wait = 15
-    # give ssl/tls users the benefit of the doubt
-    wait = 5 if m.user.secure
+    # give ssl/tls users the benefit of the doubt (after 2 minutes)
+    if m.user.secure
+      Timer(120, { :shots => 1 }) { m.channel.voice(m.user) }
+    end
 
-    Timer(wait, { :shots => 1 }) { m.channel.voice(m.user) }
+  end
+
+  def execute(m, option)
+
+    # bot is not capable
+    if !(m.channel.opped?(bot) || m.channel.half_opped?(bot))
+      m.reply("%s: How do you expect me to do this?" % [m.user.nick])
+      return
+    end
+
+    # user is not capable
+    if !(m.channel.opped?(m.user) || m.channel.half_opped?(m.user))
+      m.reply("%s: You have no power here!" % [m.user.nick])
+      return
+    end
+
+    @moderation = option == "on"
+
+    if @moderation
+
+      # set channel mode to moderated
+      m.channel.mode("+m")
+
+      # voice all users (FIXME: slow, send as batch)
+      m.channel.users.keys.each do |u|
+        m.channel.voice(u) if !m.channel.voiced?(u)
+      end
+
+    else
+
+      # set channel mode to unmoderated
+      m.channel.mode("-m")
+
+      # devoice all users (FIXME: slow, send as batch)
+      m.channel.users.keys.each do |u|
+        m.channel.devoice(u) if m.channel.voiced?(u)
+      end
+
+    end
 
   end
 
