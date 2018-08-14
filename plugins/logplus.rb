@@ -40,42 +40,44 @@ require "cgi"
 require "time"
 require "chronic"
 
-# Cinch’s :channel event does not include messages Cinch sent itself.
-# Especially for logging this is really bad, because the messages sent
-# by the bot wouldn’t show up in the generated logfiles. Therefore, this
-# monkeypatch adds a new :outmsg event to Cinch that is fired each time
-# a PRIVMSG or NOTICE is issued by the bot. It takes the following
-# arguments:
-#
-# [msg]
-#   Always nil, this did not come from the IRC server.
-# [text]
-#   The message we are about to send.
-# [notice]
-#   If true, the message is a NOTICE. Otherwise, it's a PRIVMSG.
-# [privatemsg]
-#   If true, the message is to be sent directly to a user rather
-#   than to a public channel.
-class Cinch::Target
-
-  # Override Cinch’s default message sending so so have an event
-  # to listen for for our own outgoing messages.
-  alias old_msg msg
-  def msg(text, notice = false)
-    @bot.handlers.dispatch(:outmsg, nil, text, notice, self.kind_of?(Cinch::User))
-    old_msg(text, notice)
-  end
-
-end
-
 class Cinch::LogPlus
   include Cinch::Plugin
+
+  # Hackish mini class for catching Cinch’s outgoing messages, which
+  # are not covered by the :channel event. It’d be impossible to log
+  # what the bot says otherwise, and compared to monkeypatching Cinch
+  # this is still the cleaner approach.
+  class OutgoingLogger < Cinch::Logger
+
+    # Creates a new instance. The block passed to this method will
+    # be called for each outgoing message. It will receive the
+    # outgoing message (string), the level (symbol), and whether it’s
+    # a NOTICE (true) or PRIVMSG (false) as arguments.
+    def initialize(&callback)
+      super(File.open("/dev/null"))
+      @callback = callback
+    end
+
+    # Logs a message. Calls the callback if the +event+ is
+    # an "outgoing" event.
+    def log(messages, event = :debug, level = event)
+      if event == :outgoing
+        Array(messages).each do |msg|
+          if msg =~ /^PRIVMSG .*?:/
+            @callback.call($', level, false)
+          elsif msg =~ /^NOTICE .*?:/
+            @callback.call($', level, true)
+          end
+        end
+      end
+    end
+
+  end
 
   set :required_options, [:logdir]
 
   listen_to :connect,    :method => :startup
   listen_to :channel,    :method => :log_public_message
-  listen_to :outmsg,     :method => :log_own_message
   listen_to :topic,      :method => :log_topic
   listen_to :join,       :method => :log_join
   listen_to :leaving,    :method => :log_leaving
@@ -99,6 +101,18 @@ class Cinch::LogPlus
       }
       .chattable {
         border-collapse: collapse;
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+        width: 100%;
+      }
+      .chattable tr td {
+        vertical-align: top;
+        white-space: nowrap;
+        min-width: 10px;
+      }
+      .chattable tr td:last-child {
+        width: 100%;
+        white-space: normal;
       }
       .msgnick {
         border-style: solid;
@@ -161,6 +175,9 @@ class Cinch::LogPlus
     @htmllogfile     = nil
 
     @filemutex = Mutex.new
+
+    # Add our hackish logger for catching outgoing messages.
+    bot.loggers.push(OutgoingLogger.new(&method(:log_own_message)))
 
     reopen_logs
 
@@ -232,8 +249,7 @@ class Cinch::LogPlus
   end
 
   # Target for all messages issued by the bot.
-  def log_own_message(msg, text, is_notice, is_private)
-    return if is_private # Do not log messages not targetted at the channel
+  def log_own_message(text, level, is_notice)
 
     @filemutex.synchronize do
       # Logs the given text to the HTML logfile. Does NOT
@@ -425,7 +441,6 @@ class Cinch::LogPlus
       <a href="#{Date.today.prev_day.strftime('%Y-%m-%d')}.html">&lt;==</a>
       <a href="#{Date.today.next_day.strftime('%Y-%m-%d')}.html">==&gt;</a>
     </p>
-    <hr/>
     <table class="chattable">
     HTML
   end
