@@ -308,7 +308,7 @@ class Cinch::LogPlus
     end
   end
 
-  def log_leaving(msg, leaving_user)
+  def log_leaving(msg)
     @filemutex.synchronize do
       if msg.channel?
         text = "left #{msg.channel.name} (#{CGI.escape_html(msg.message)})"
@@ -320,7 +320,7 @@ class Cinch::LogPlus
         <tr id="#{timestamp_anchor(msg.time)}">
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">&lt;--</td>
-          <td class="msgleave"><span class="actionnick">#{determine_status(msg)}#{leaving_user.name}</span>&nbsp;#{text}.</td>
+          <td class="msgleave"><span class="actionnick">#{determine_status(msg)}#{msg.user.name}</span>&nbsp;#{text}.</td>
         </tr>
       HTML
     end
