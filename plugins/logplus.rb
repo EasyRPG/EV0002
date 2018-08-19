@@ -254,6 +254,9 @@ class Cinch::LogPlus
   # Target for all messages issued by the bot.
   def log_own_message(text, level, is_notice)
 
+    # We currently do not want notices to be logged.
+    return if is_notice
+
     @filemutex.synchronize do
       # Logs the given text to the HTML logfile. Does NOT
       # acquire the file mutex!
