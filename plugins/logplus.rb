@@ -362,11 +362,14 @@ class Cinch::LogPlus
         change += adds.reduce("+"){|str, subary| str + subary[1] + (subary[2] ? " " + subary[2] : "")}.rstrip
       end
 
+      which = changes.all?{|subary| subary[2]} ? "User mode" : "Channel Mode"
+      who = msg.user.kind_of?(Cinch::User) ? msg.user.name : "the Server"
+
       @htmllogfile.write(<<-HTML)
         <tr id="#{timestamp_anchor(msg.time)}">
           <td class="msgtime">#{timestamp_link(msg.time)}</td>
           <td class="msgnick">--</td>
-          <td class="msgmode">Mode #{change} by <span class="actionnick">#{determine_status(msg)}#{msg.user.name}</span>.</td>
+          <td class="msgmode">#{which} #{change} by <span class="actionnick">#{determine_status(msg)}#{who}</span>.</td>
         </tr>
       HTML
     end
