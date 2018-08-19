@@ -104,8 +104,8 @@ class Cinch::LogPlus
       }
       .chattable {
         border-collapse: collapse;
-        border-top: 1px solid black;
-        border-bottom: 1px solid black;
+        border-top: 1px solid #999;
+        border-bottom: 1px solid #999;
         width: 100%;
       }
       .chattable tr td {
