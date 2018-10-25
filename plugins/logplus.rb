@@ -214,7 +214,11 @@ class Cinch::LogPlus
     if requested_date.nil?
       msg.reply "I really have no idea which logfile you want…"
     else
-      msg.reply "#{config[:logurl]}/#{requested_date.strftime('%Y-%m-%d')}.html"
+      if requested_date.year != Time.now.year
+        msg.reply "#{config[:logurl]}/#{requested_date.year}/#{requested_date.strftime('%Y-%m-%d')}.html"
+      else
+        msg.reply "#{config[:logurl]}/#{requested_date.strftime('%Y-%m-%d')}.html"
+      end
     end
   end
 
