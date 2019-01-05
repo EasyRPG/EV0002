@@ -108,6 +108,12 @@ class Cinch::LogPlus
         border-bottom: 1px solid #999;
         width: 100%;
       }
+      .chattable tr:nth-child(even) {
+        background: #E5E5E5;
+      }
+      .chattable tr:nth-child(odd) {
+        background: white;
+      }
       .chattable tr td {
         vertical-align: top;
         white-space: nowrap;
