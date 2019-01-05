@@ -214,7 +214,7 @@ class Cinch::LogPlus
     if requested_date.nil?
       msg.reply "I really have no idea which logfile you want…"
     else
-      msg.reply "#{config[:logurl]}/#{requested_date.strftime('%Y-%m-%d')}.html"
+      msg.reply "#{config[:logurl]}/#{requested_date.strftime('%Y/%m/%d')}/"
     end
   end
 
@@ -380,7 +380,7 @@ class Cinch::LogPlus
   # Helper method for generating the file basename for the logfiles
   # and appending the given extension (which must include the dot).
   def genfilename(ext)
-    Time.now.strftime("%Y-%m-%d") + ext
+    Time.now.strftime("%Y/%Y-%m-%d") + ext
   end
 
   # Helper method for determining the status of the user sending
@@ -422,6 +422,9 @@ class Cinch::LogPlus
           finish_html_file
           @htmllogfile.close
 
+          if not Dir.exist?(File.dirname(htmlfile))
+            Dir.mkdir(File.dirname(htmlfile))
+          end
           @htmllogfile = File.open(htmlfile, "w")
           @htmllogfile.sync = true
           start_html_file
@@ -434,6 +437,10 @@ class Cinch::LogPlus
           # Do not write preamble, continue with current file
         else
           # First bot startup on this day
+          if not Dir.exist?(File.dirname(htmlfile))
+            Dir.mkdir(File.dirname(htmlfile))
+          end
+
           @htmllogfile = File.open(htmlfile, "w")
           @htmllogfile.sync = true
           start_html_file
