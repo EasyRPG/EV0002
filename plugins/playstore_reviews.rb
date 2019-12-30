@@ -31,7 +31,7 @@ class Cinch::PlayStoreReviews
 
     # rate limit is 60 per hour
     response = HTTP.get(
-      "https://www.googleapis.com/androidpublisher/v2/applications/" + app + "/reviews",
+      "https://www.googleapis.com/androidpublisher/v3/applications/" + app + "/reviews",
       :params => {
         :access_token => authorizer.access_token,
         :translationLanguage => "en"})
