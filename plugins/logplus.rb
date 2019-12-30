@@ -98,28 +98,52 @@ class Cinch::LogPlus
       body {
         background: white;
         color: black;
-        font: 0.9em "Droid Sans Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",
+        font: 1em "Droid Sans Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono",
               "Liberation Mono", "Nimbus Mono L", Monaco, Consolas, "Lucida Console",
               "Lucida Sans Typewriter", "Courier New", monospace;
       }
-      .chattable {
+      h1 {
+        font-family: "Droid Sans", "DejaVu Sans", "Bitstream Vera Sans",
+                     "Liberation Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+      }
+      a {
+        text-decoration:none;
+      }
+      nav {
+        font-size: 0.8em;
+        margin-bottom: 20px;
+      }
+      nav a, footer a {
+        display: inline-block;
+        font-size: 1.4em;
+        font-weight: bold;
+        padding: 2px 6px 0 6px;
+        background: #F3F3F3;
+        color: #630;
+        border: 1px solid #999;
+      }
+      footer {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        text-align: right;
+      }
+      table {
+        font-size: 0.9em;
         border-collapse: collapse;
         border-top: 1px solid #999;
         border-bottom: 1px solid #999;
         width: 100%;
+        margin-bottom: 40px;
       }
-      .chattable tr:nth-child(even) {
-        background: #E5E5E5;
-      }
-      .chattable tr:nth-child(odd) {
-        background: white;
-      }
-      .chattable tr td {
+      table tr:nth-child(even) { background: #E5E5E5; }
+      table tr:nth-child(odd) { background: white; }
+      table tr td {
         vertical-align: top;
         white-space: nowrap;
         min-width: 10px;
       }
-      .chattable tr td:last-child {
+      table tr td:last-child {
         width: 100%;
         white-space: normal;
       }
@@ -132,44 +156,37 @@ class Cinch::LogPlus
       .msgtime {
         padding-right: 8px;
       }
-      .msgtime a {
-        text-decoration:none;
+      .msgmessage, .msgaction, .msgtopic, .msgnickchange, .msgmode, .msgjoin, .msgleave {
+        padding-left: 8px;
+      }
+      .msgaction, .msgtopic, .msgnickchange, .msgmode, .msgjoin, .msgleave {
+        font-style: italic;
       }
       .msgmessage {
-        padding-left: 8px;
         white-space: pre-wrap;
       }
-      .msgaction {
-        padding-left: 8px;
-        font-style: italic;
-      }
-      .msgtopic {
-        padding-left: 8px;
+      .msgtopic, .msgnickchange, .msgmode {
         font-weight: bold;
-        font-style: italic;
-        color: #920002;
       }
-      .msgnickchange {
-        padding-left: 8px;
-        font-weight: bold;
-        font-style: italic;
-        color: #820002;
-      }
-      .msgmode {
-        padding-left: 8px;
-        font-weight: bold;
-        font-style: italic;
-        color: #920002;
-      }
-      .msgjoin {
-        padding-left: 8px;
-        font-style: italic;
-        color: green;
-      }
-      .msgleave {
-        padding-left: 8px;
-        font-style: italic;
-        color: red;
+      .msgtopic { color: #920002; }
+      .msgnickchange { color: #820002; }
+      .msgmode { color: #920002; }
+      .msgjoin { color: green; }
+      .msgleave { color: red; }
+
+      @media screen and (max-width: 768px) {
+        table tr td {
+          display: inline-block;
+        }
+        table tr td:last-child {
+          display: block;
+        }
+        .msgnick {
+          border-width: 0;
+        }
+        .msgmessage, .msgaction, .msgtopic, .msgnickchange, .msgmode, .msgjoin, .msgleave {
+          padding-left: 0;
+        }
       }
     </style>
   EOC
@@ -474,16 +491,20 @@ class Cinch::LogPlus
   <head>
     <title>#{bot.config.channels.first} IRC logs, #{Time.now.strftime('%Y-%m-%d')}</title>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 #{@extrahead}
   </head>
   <body>
     <h1>#{bot.config.channels.first} IRC logs, #{Time.now.strftime('%Y-%m-%d')}</h1>
-    <p>
+    <nav>
       All times are UTC#{Time.now.strftime('%:z')}.
       <a href="#{Date.today.prev_day.strftime('%Y-%m-%d')}.html">&lt;==</a>
       <a href="#{Date.today.next_day.strftime('%Y-%m-%d')}.html">==&gt;</a>
-    </p>
-    <table class="chattable">
+    </nav>
+    <footer>
+      <a href="#">^</a>
+    </footer>
+    <table>
     HTML
   end
 
