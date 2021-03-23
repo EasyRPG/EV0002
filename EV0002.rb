@@ -54,7 +54,7 @@ bot = Cinch::Bot.new do
 
   # all (active) EasyRPG projects
   projects = ["liblcf", "Player", "Tools", "RTP", "TestGame",
-              "Editor-Qt", "Editor-GTK", "Editor-wx",
+              "Editor", "Editor-GTK", "Editor-wx",
               "EV0002", "easyrpg.org", "wiki", "event-tests",
               "buildscripts", "obs-config", "jenkins-config"]
 
