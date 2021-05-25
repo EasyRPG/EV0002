@@ -27,9 +27,6 @@ class Cinch::AutoVoice
     # our guests using kiwiirc
     autovoice = true if m.user.match("*!*@gateway/web/cgi-irc/kiwiirc.com/ip.*")
 
-    # freenode webchat users (reCAPTCHA approved)
-    autovoice = true if m.user.match("*!*@gateway/web/freenode/ip.*")
-
     # identified users (nickserv), same like +M channel flag
     autovoice = true if m.user.authed?
 

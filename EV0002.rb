@@ -24,7 +24,7 @@ $secrets = YAML.load_file("#{PWD}/secrets.yml")
 
 bot = Cinch::Bot.new do
   configure do |c|
-    c.server = "chat.freenode.net"
+    c.server = "irc.libera.chat"
     c.port = 6697
     c.ssl.use = true
     c.ssl.verify = false
