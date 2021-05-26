@@ -1,7 +1,7 @@
 # EV0002
 
-The channel bot in [#easyrpg][webchat] on freenode, provides logs, pizza and a lot of
-other stuff.
+The channel bot in [#easyrpg][webchat] on Libera Chat, provides logs, pizza and
+a lot of other stuff.
 
 It is is written in ruby, using the [cinch][cinch] bot framework (our legacy
 [EV0001][ev0001] bot was written from scratch).
@@ -111,7 +111,7 @@ https://github.com/Quintus/cinch-plugins
    happens on Twitter. This uses the webserver provided by http_server.rb and
    relies on the Zapier service and Twitter api.
 
-[webchat]: https://kiwiirc.com/nextclient/#ircs://irc.freenode.net/#easyrpg?nick=rpgguest??
+[webchat]: https://kiwiirc.com/nextclient/#ircs://irc.libera.chat/#easyrpg?nick=rpgguest??
 [cinch]: https://github.com/cinchrb/cinch
 [ev0001]: https://github.com/EasyRPG/EV0001
 [cinch-seen]: https://github.com/bhaberer/cinch-seen
