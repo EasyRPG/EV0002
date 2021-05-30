@@ -10,3 +10,6 @@ gem "googleauth"
 gem "http"
 
 gem "xmlrpc" if RUBY_VERSION >= "2.4.0"
+
+# cinch is not compatible with ruby 3
+ruby '< 3.0'

@@ -25,9 +25,9 @@ Deprecated/Optional gems:
 
 You can use bundler to install them and their dependencies.
 
-    $ bundle install --path vendor/bundle [--shebang="ruby2.1"]
-
-If you provide the path argument, gems will be installed locally.
+    $ bundle config set --local path 'vendor/bundle'
+    $ bundle config set --local clean true
+    $ bundle install
 
 Secret values (passwords and such) are read from a file `secrets.yml` on startup.
 A template is provided, you need to copy it and fill in the values or remove all
