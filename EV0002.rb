@@ -16,6 +16,7 @@ require_relative "plugins/blog_webhooks"
 require_relative "plugins/playstore_reviews"
 require_relative "plugins/twitter_webhooks"
 require_relative "plugins/discourse_webhooks"
+require_relative "plugins/jenkins_failures"
 
 PWD = File.dirname(File.expand_path(__FILE__))
 
@@ -48,7 +49,8 @@ bot = Cinch::Bot.new do
                           Cinch::BlogWebhooks,
                           Cinch::PlayStoreReviews,
                           Cinch::TwitterWebhooks,
-                          Cinch::DiscourseWebhooks
+                          Cinch::DiscourseWebhooks,
+                          Cinch::JenkinsFailures
                         ]
   end
 
@@ -108,6 +110,13 @@ bot = Cinch::Bot.new do
   config.plugins.options[Cinch::DiscourseWebhooks] = {
     :url => "https://community.easyrpg.org",
     :secret => $secrets["discourse_hooks"]["secret"]
+  }
+
+  config.plugins.options[Cinch::JenkinsFailures] = {
+    :server => "https://ci.easyrpg.org/",
+    :view => "failing",
+    :user => $secrets["jenkins_failures"]["user"],
+    :pass => $secrets["jenkins_failures"]["pass"]
   }
 
   # log to file

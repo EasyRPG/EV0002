@@ -15,13 +15,10 @@ Needed gems besides `cinch` are (see Gemfile for details):
  * [thin][thin]
  * [sinatra][sinatra]
  * [chronic][chronic]
- * [http][http]
  * [googleauth][googleauth]
+ * [http][http]
+ * [jenkins2-api][jenkins2-api]
  * [xmlrpc][xmlrpc] (for ruby 2.4+)
-
-Deprecated/Optional gems:
-
- * [cinch-identify][cinch-identify], SASL is preferred now.
 
 You can use bundler to install them and their dependencies.
 
@@ -111,6 +108,15 @@ https://github.com/Quintus/cinch-plugins
    happens on Twitter. This uses the webserver provided by http_server.rb and
    relies on the Zapier service and Twitter api.
 
+ * plugins/discourse_webhooks.rb:
+
+   Uses webhooks to provide channel notifications, when a new topic is added on the forums.
+
+ * plugins/jenkins_failures.rb:
+
+   Uses the Jenkins API (pulled with a timer) to provide channel notifications about
+   failed builds.
+
 [webchat]: https://kiwiirc.com/nextclient/#ircs://irc.libera.chat/#easyrpg?nick=rpgguest??
 [cinch]: https://github.com/cinchrb/cinch
 [ev0001]: https://github.com/EasyRPG/EV0001
@@ -122,5 +128,6 @@ https://github.com/Quintus/cinch-plugins
 [chronic]: https://github.com/mojombo/chronic
 [http]: https://github.com/httprb/http
 [googleauth]: https://github.com/google/google-auth-library-ruby
+[jenkins2-api]: https://github.com/yitsushi/jenkins2-api
 [xmlrpc]: https://github.com/ruby/xmlrpc
 [quintus]: https://github.com/Quintus

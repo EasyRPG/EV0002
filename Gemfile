@@ -8,6 +8,7 @@ gem "sinatra"
 gem "chronic"
 gem "googleauth"
 gem "http"
+gem "jenkins2-api"
 
 gem "xmlrpc" if RUBY_VERSION >= "2.4.0"
 
