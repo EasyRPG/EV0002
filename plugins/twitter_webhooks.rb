@@ -36,7 +36,7 @@ class Cinch::TwitterWebhooks
     case event
     when "follower"
 
-      template = "New follower: %s (https://twitter.com/%s)! \x0308🎉\x0F"
+      template = "New follower: %s (https://twitter.com/%s) \x0308🎉\x0F"
       message = sprintf(template,
                         data["name"],
                         user)
