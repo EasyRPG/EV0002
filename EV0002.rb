@@ -35,6 +35,8 @@ bot = Cinch::Bot.new do
     c.sasl.username = $secrets["nickserv"]["username"]
     c.sasl.password = $secrets["nickserv"]["password"]
     c.channels = ["#easyrpg"]
+    # see https://libera.chat/guides/usermodes
+    c.modes = [ "+g", "+i", "+Q", "+R", "-w" ]
     c.plugins.prefix = /^:/
     c.plugins.plugins = [
                           Cinch::AutoVoice,
