@@ -4,7 +4,8 @@ The channel bot in [#easyrpg][webchat] on Libera Chat, provides logs, pizza and
 a lot of other stuff.
 
 It is is written in ruby, using the [cinch][cinch] bot framework (our legacy
-[EV0001][ev0001] bot was written from scratch).
+[EV0001][ev0001] bot was written from scratch). It runs with older rubies, is
+not compatible with the current version `ruby 3`.
 
 ## Installation
 
@@ -26,6 +27,8 @@ You can use bundler to install them and their dependencies.
     $ bundle config set --local clean true
     $ bundle install
 
+For Arch Linux replace `bundle` with `bundle2.7`.
+
 Secret values (passwords and such) are read from a file `secrets.yml` on startup.
 A template is provided, you need to copy it and fill in the values or remove all
 references to `$secrets` and fill in the values directly.
@@ -36,6 +39,10 @@ references to `$secrets` and fill in the values directly.
 
 This helper script tries to detect if you installed the gems locally with bundler and
 will run EV0002 in bundler environment if needed.
+
+If your system is recent, it will ship with a newer version of ruby, we recommend
+using [rvm][rvm] or [rbenv][rbenv] to install and use ruby 2.7.6 for the time being,
+a `.ruby-version` file is provided.
 
 ## LICENSE
 
@@ -130,4 +137,6 @@ https://github.com/Quintus/cinch-plugins
 [googleauth]: https://github.com/google/google-auth-library-ruby
 [jenkins2-api]: https://github.com/yitsushi/jenkins2-api
 [xmlrpc]: https://github.com/ruby/xmlrpc
+[rvm]: https://rvm.io
+[rbenv]: https://github.com/rbenv/rbenv
 [quintus]: https://github.com/Quintus
