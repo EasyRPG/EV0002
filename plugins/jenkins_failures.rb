@@ -1,7 +1,7 @@
 #
 # This cinch plugin is part of EV0002
 #
-# written by carstene1ns <dev @ f4ke . de> 2021
+# written by carstene1ns <dev @ f4ke . de> 2021-2024
 # available under ISC license
 #
 
@@ -10,8 +10,8 @@ require 'jenkins2-api'
 class Cinch::JenkinsFailures
   include Cinch::Plugin
 
-  # Every 10 minutes
-  timer 10 * 60, method: :get_failures
+  # Every hour
+  timer 60 * 60, method: :get_failures
 
   def get_failures
     server = config[:server]
@@ -39,12 +39,12 @@ class Cinch::JenkinsFailures
 
     return if failed.empty?
 
-    # filter last 10 minutes
+    # filter last hour
     recent = Array.new
     failed.each do |job|
       build = client.build.latest(job)
       endtime = Time.at((build['timestamp'].to_i + build['duration'].to_i) / 1000)
-      recent.push(job) if endtime > Time.now - (10 * 60)
+      recent.push(job) if endtime > Time.now - (60 * 60)
     end
 
     return if recent.empty?
