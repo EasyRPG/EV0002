@@ -14,7 +14,7 @@ require_relative "plugins/logplus"
 require_relative "plugins/dokuwiki_xmlrpc"
 require_relative "plugins/blog_webhooks"
 require_relative "plugins/playstore_reviews"
-require_relative "plugins/twitter_webhooks"
+#require_relative "plugins/twitter_webhooks"
 require_relative "plugins/discourse_webhooks"
 require_relative "plugins/jenkins_failures"
 
@@ -50,7 +50,7 @@ bot = Cinch::Bot.new do
                           Cinch::DokuwikiXMLRPC,
                           Cinch::BlogWebhooks,
                           Cinch::PlayStoreReviews,
-                          Cinch::TwitterWebhooks,
+                          #Cinch::TwitterWebhooks,
                           Cinch::DiscourseWebhooks,
                           Cinch::JenkinsFailures
                         ]
@@ -104,10 +104,10 @@ bot = Cinch::Bot.new do
     :json_key => PWD + "/" + $secrets["playstore"]["jsonfile"]
   }
 
-  config.plugins.options[Cinch::TwitterWebhooks] = {
-    :user => "EasyRPG",
-    :secret => $secrets["twitter_hooks"]["secret"]
-  }
+  #config.plugins.options[Cinch::TwitterWebhooks] = {
+  #  :user => "EasyRPG",
+  #  :secret => $secrets["twitter_hooks"]["secret"]
+  #}
 
   config.plugins.options[Cinch::DiscourseWebhooks] = {
     :url => "https://community.easyrpg.org",
