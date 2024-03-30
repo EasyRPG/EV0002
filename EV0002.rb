@@ -57,10 +57,9 @@ bot = Cinch::Bot.new do
   end
 
   # all (active) EasyRPG projects
-  projects = ["liblcf", "Player", "Tools", "RTP", "TestGame",
-              "Editor", "Editor-GTK", "Editor-wx",
-              "EV0002", "easyrpg.org", "wiki", "event-tests",
-              "buildscripts", "obs-config", "jenkins-config"]
+  projects = ["liblcf", "Player", "Tools", "RTP", "TestGame", "Editor",
+              "EV0002", "easyrpg.org", "wiki", "regression-tests",
+              "buildscripts", "packaging"]
 
   # plugin specific options
   config.plugins.options[Cinch::EasyRPGLinks] = {

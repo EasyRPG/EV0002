@@ -17,6 +17,7 @@ class Cinch::EasyRPGLinks
   match "jenkins", method: :link_jenkins
   match "ci", method: :link_jenkins
   match "twitter", method: :link_twitter
+  match "social", method: :link_social
   match "paste", method: :link_paste
 
   def execute(msg, project)
@@ -53,6 +54,10 @@ class Cinch::EasyRPGLinks
 
   def link_twitter(msg)
     msg.reply "https://twitter.com/easyrpg/"
+  end
+
+  def link_social(msg)
+    msg.reply "https://social.easyrpg.org/@easyrpg"
   end
 
   def link_paste(msg)
