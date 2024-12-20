@@ -215,9 +215,12 @@ class Cinch::GitHubWebhooks
                         data["review"]["html_url"])
 
       # add up to 200 characters of the comment, sans all whitespace
-      comment = data["review"]["body"].gsub(/\s+/,' ').strip
-      message << "\n> " + comment[0, 200] if comment.length > 0
-      message << "…" if comment.length > 200
+      comment = data["review"]["body"]
+      unless comment.nil?
+        comment = comment.gsub(/\s+/,' ').strip
+        message << "\n> " + comment[0, 200] if comment.length > 0
+        message << "…" if comment.length > 200
+      end
 
     when "commit_comment"
       # comment on commit
