@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'cinch'
+require 'ircinch'
 require 'cinch-seen'
 require 'yaml'
 
