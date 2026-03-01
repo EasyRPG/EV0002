@@ -6,11 +6,12 @@
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "devDependencies (non-major)",
+      "matchUpdateTypes": ["patch", "minor", "major"],
+      "groupName": "devDependencies",
       "groupSlug": "dev-dependencies"
     }
   ],
   "rangeStrategy" : "in-range-only",
-  "labels": ["dependencies"]
+  "labels": ["dependencies"],
+  "schedule": "monthly"
 }
