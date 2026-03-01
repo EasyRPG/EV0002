@@ -1,7 +1,7 @@
 #
 # This cinch plugin is part of EV0002
 #
-# written by carstene1ns <dev @ f4ke . de> 2014-2017
+# written by carstene1ns <dev @ f4ke . de> 2014-2026
 # available under ISC license
 #
 
@@ -29,24 +29,6 @@ class Cinch::GitHubWebhooks
 
     # get event type from http header
     event = request.env["HTTP_X_GITHUB_EVENT"]
-
-    # we ignore some events (TODO: use whitelist instead of blacklist)
-    halt 202 if [
-                  'ping',               # test, when enabling webhook
-                  'gollum',             # wiki changes
-                  'deployment',         # ?
-                  'deployment_status',  # ?
-                  'label',              # repository labels
-                  'member',             # collaborator added
-                  'milestone',          # repository milestones
-                  'page_build',         # github pages built
-                  'project',            # projects
-                  'project_card',       #
-                  'project_column',     #
-                  'public',             # repository visibility
-                  'status',             # internal git commit events
-                  'team_add'            # user added to team
-                 ].include? event
 
     # get common info: affected repository and user
     repo = data["repository"]["name"]
@@ -191,15 +173,16 @@ class Cinch::GitHubWebhooks
       message << "…" if comment.length > 200
 
     when "pull_request_review"
-      # review (can be with comment)
+      # review (have been with comment)
 
       # we ignore possible other actions (that may be added in the future)
       halt 202 unless data["action"] == "submitted"
 
+      # we ignore comments (since they are empty now)
+      halt 202 if data["review"]["state"] == "commented"
+
       if data["review"]["state"] == "approved"
         state = "\x0303approved\x0F"
-      elsif data["review"]["state"] == "commented"
-        state = "reviewed"
       else
         state = "\x0304requested changes\x0F"
       end
@@ -279,9 +262,8 @@ class Cinch::GitHubWebhooks
                         data["release"]["html_url"])
 
     else
-      # something we do not know, yet
-      info "Error: Unknown '#{event}' event for #{repo} repository! :[]"
-      204
+      # we ignore all other events
+      halt 202
     end
 
     # output
