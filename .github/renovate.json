@@ -5,10 +5,10 @@
   ],
   "packageRules": [
     {
-      "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["patch", "minor", "major"],
-      "groupName": "devDependencies",
-      "groupSlug": "dev-dependencies"
+      "description": "Group dependencies from bundler",
+      "matchFileNames": ["**/Gemfile"],
+      "groupName": "All Gemfile changes",
+      "groupSlug": "update-dependencies"
     }
   ],
   "rangeStrategy" : "in-range-only",
