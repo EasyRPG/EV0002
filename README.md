@@ -4,12 +4,12 @@ The channel bot in [#easyrpg][webchat] on Libera Chat, provides logs, pizza and
 a lot of other stuff.
 
 It is is written in ruby, using the [cinch][cinch] bot framework (our legacy
-[EV0001][ev0001] bot was written from scratch). It runs with older rubies, is
-not compatible with the current version `ruby 3`.
+[EV0001][ev0001] bot was written from scratch). Because cinch is unmaintained
+and runs only with older rubies, we use the fork [ircinch][ircinch] nowadays.
 
 ## Installation
 
-Needed gems besides `cinch` are (see Gemfile for details):
+Needed gems besides `ircinch` are (see Gemfile for details):
 
  * [cinch-seen][cinch-seen]
  * [json][json]
@@ -18,16 +18,14 @@ Needed gems besides `cinch` are (see Gemfile for details):
  * [chronic][chronic]
  * [googleauth][googleauth]
  * [http][http]
- * [jenkins2-api][jenkins2-api]
- * [xmlrpc][xmlrpc] (for ruby 2.4+)
+ * [jenkins_api_client][jenkins_api_client]
+ * [xmlrpc][xmlrpc]
 
 You can use bundler to install them and their dependencies.
 
     $ bundle config set --local path 'vendor/bundle'
     $ bundle config set --local clean true
     $ bundle install
-
-For Arch Linux replace `bundle` with `bundle2.7`.
 
 Secret values (passwords and such) are read from a file `secrets.yml` on startup.
 A template is provided, you need to copy it and fill in the values or remove all
@@ -37,12 +35,8 @@ references to `$secrets` and fill in the values directly.
 
     $ ./EV0002
 
-This helper script tries to detect if you installed the gems locally with bundler and
-will run EV0002 in bundler environment if needed.
-
-If your system is recent, it will ship with a newer version of ruby, we recommend
-using [rvm][rvm] or [rbenv][rbenv] to install and use ruby 2.7.6 for the time being,
-a `.ruby-version` file is provided.
+This helper script tries to detect if you installed the gems locally with
+bundler and will run EV0002 in bundler environment if needed.
 
 ## LICENSE
 
@@ -111,9 +105,10 @@ https://github.com/Quintus/cinch-plugins
 
  * plugins/twitter_webhooks.rb:
 
-   Uses Zapier webhooks to provide channel notifications, when something project related
+   ~~Uses Zapier webhooks to provide channel notifications, when something project related
    happens on Twitter. This uses the webserver provided by http_server.rb and
-   relies on the Zapier service and Twitter api.
+   relies on the Zapier service and Twitter api.~~
+   This plugins has been deactivated since twitter is actively f-ing its users over.
 
  * plugins/discourse_webhooks.rb:
 
@@ -126,17 +121,15 @@ https://github.com/Quintus/cinch-plugins
 
 [webchat]: https://kiwiirc.com/nextclient/#ircs://irc.libera.chat/#easyrpg?nick=rpgguest??
 [cinch]: https://github.com/cinchrb/cinch
+[ircinch]: https://github.com/ircinchrb/ircinch
 [ev0001]: https://github.com/EasyRPG/EV0001
 [cinch-seen]: https://github.com/bhaberer/cinch-seen
-[cinch-identify]: https://github.com/cinchrb/cinch-identify
 [json]: http://flori.github.io/json/
 [thin]: http://code.macournoyer.com/thin/
 [sinatra]: http://sinatrarb.com/
 [chronic]: https://github.com/mojombo/chronic
 [http]: https://github.com/httprb/http
 [googleauth]: https://github.com/google/google-auth-library-ruby
-[jenkins2-api]: https://github.com/yitsushi/jenkins2-api
+[jenkins_api_client]: https://github.com/arangamani/jenkins_api_client
 [xmlrpc]: https://github.com/ruby/xmlrpc
-[rvm]: https://rvm.io
-[rbenv]: https://github.com/rbenv/rbenv
 [quintus]: https://github.com/Quintus
